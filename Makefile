@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-std=c11 -Wall -Wextra -Wno-unused-parameter
-SUFFIX= -01
+SUFFIX= -O0
 LDFLAGS=
 
 
@@ -18,9 +18,9 @@ headless: headless.o $(COMMON_OBJECTS)
 
 hdTest: headless.o $(COMMON_OBJECTS) 
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-	./hdTest 128 > tp1/n128$(SUFFIX).csv
-	./hdTest 256 > tp1/n256$(SUFFIX).csv
-	./hdTest 512 > tp1/n512$(SUFFIX).csv
+	./hdTest 128 > tp1/sv/n128$(SUFFIX).csv
+	./hdTest 256 > tp1/sv/n256$(SUFFIX).csv
+	./hdTest 512 > tp1/sv/n512$(SUFFIX).csv
 
 clean:
 	rm -f $(TARGETS) *.o .depend *~
