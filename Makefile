@@ -20,7 +20,7 @@ hdTest: headless.o $(COMMON_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 	./hdTest 128 > tp1/sv/$(CC)/n128$(SUFFIX).csv
 	./hdTest 256 > tp1/sv/$(CC)/n256$(SUFFIX).csv
-	./hdTest 512 > tp1/sv//$(CC)/n512$(SUFFIX).csv
+	./hdTest 512 > tp1/sv/$(CC)/n512$(SUFFIX).csv
 
 clean:
 	rm -f $(TARGETS) *.o .depend *~
