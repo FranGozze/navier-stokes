@@ -18,6 +18,7 @@ LDFLAGS=
 SUFFIXX=
 SUFFIX=
 
+SOURCES=$(shell echo *.c)
 # Objetos comunes
 COMMON_OBJECTS=solver.o wtime.o
 
@@ -30,6 +31,12 @@ build_%:
 	$(eval flags=$(word 2,$(subst _, ,$*)))
 	@echo "Building with $(compiler) and flags $(flags)"
 	$(MAKE) CC=$(compiler) CFLAGS="$(CFLAGS) $(flags)" SUFFIX=_$(compiler)_$(flags) headless
+
+
+
+demo: demo.o $(COMMON_OBJECTS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) -lGL -lGLU -lglut
+
 
 # Regla para compilar el objetivo headless
 headless: headless.o $(COMMON_OBJECTS)
