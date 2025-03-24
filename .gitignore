@@ -3,3 +3,4 @@ headless
 .depend
 *.o
 tp1/sv/nohup.out
+venv
