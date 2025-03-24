@@ -1,11 +1,11 @@
 # Compiladores disponibles
-COMPILERS=gcc clang icx icc
+COMPILERS=gcc clang icx
 
 # Flags adicionales
-EXTRA_FLAGS=-O0 -O1 -O2 -O3
+EXTRA_FLAGS=-O0 -O1 -O2 -O3 -Ofast
 
 # Lista de valores numéricos para ejecutar
-VALUES=128 256 512
+VALUES=128
 
 # Compilador por defecto
 CC=gcc
@@ -18,7 +18,6 @@ LDFLAGS=
 SUFFIXX=
 SUFFIX=
 
-SOURCES=$(shell echo *.c)
 # Objetos comunes
 COMMON_OBJECTS=solver.o wtime.o
 
@@ -30,13 +29,7 @@ build_%:
 	$(eval compiler=$(word 1,$(subst _, ,$*)))
 	$(eval flags=$(word 2,$(subst _, ,$*)))
 	@echo "Building with $(compiler) and flags $(flags)"
-	$(MAKE) CC=$(compiler) CFLAGS="$(CFLAGS) $(flags)" SUFFIX=_$(compiler)_$(flags) headless
-
-
-
-demo: demo.o $(COMMON_OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) -lGL -lGLU -lglut
-
+	$(MAKE) headless CC=$(compiler) CFLAGS="$(CFLAGS) $(flags)" SUFFIX=_$(compiler)_$(flags)
 
 # Regla para compilar el objetivo headless
 headless: headless.o $(COMMON_OBJECTS)
