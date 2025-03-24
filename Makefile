@@ -18,8 +18,8 @@ LDFLAGS=
 SUFFIXX=
 SUFFIX=
 
-# Objetos comunes
-COMMON_OBJECTS=solver.o wtime.o
+# Objetos comunes (now with suffix)
+COMMON_OBJECTS=solver$(SUFFIX).o wtime$(SUFFIX).o
 
 # Objetivo principal
 all: $(foreach compiler,$(COMPILERS),$(foreach flags,$(EXTRA_FLAGS),build_$(compiler)_$(flags)))
@@ -32,8 +32,22 @@ build_%:
 	$(MAKE) headless CC=$(compiler) CFLAGS="$(CFLAGS) $(flags)" SUFFIX=_$(compiler)_$(flags)
 
 # Regla para compilar el objetivo headless
-headless: headless.o $(COMMON_OBJECTS)
+headless: headless$(SUFFIX).o $(COMMON_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o headless$(SUFFIX) $(LDFLAGS)
+
+# Pattern rule for object files with suffix
+%.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Specific rules for suffixed object files
+solver$(SUFFIX).o: solver.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+wtime$(SUFFIX).o: wtime.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+headless$(SUFFIX).o: headless.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Regla para ejecutar el ejecutable con diferentes valores y guardar los resultados en archivos
 run: all
