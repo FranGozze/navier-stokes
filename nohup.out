@@ -1,0 +1,692 @@
+Building with gcc and flags -O0
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O0" SUFFIX=_gcc_-O0
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O0 headless_gcc_-O0.o solver_gcc_-O0.o wtime_gcc_-O0.o -o headless_gcc_-O0 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -O1
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O1" SUFFIX=_gcc_-O1
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O1 headless_gcc_-O1.o solver_gcc_-O1.o wtime_gcc_-O1.o -o headless_gcc_-O1 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -O2
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O2" SUFFIX=_gcc_-O2
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O2 headless_gcc_-O2.o solver_gcc_-O2.o wtime_gcc_-O2.o -o headless_gcc_-O2 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -O3
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O3" SUFFIX=_gcc_-O3
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O3 headless_gcc_-O3.o solver_gcc_-O3.o wtime_gcc_-O3.o -o headless_gcc_-O3 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -Ofast
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast" SUFFIX=_gcc_-Ofast
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast headless_gcc_-Ofast.o solver_gcc_-Ofast.o wtime_gcc_-Ofast.o -o headless_gcc_-Ofast 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O0
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O0" SUFFIX=_clang_-O0
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O0 headless_clang_-O0.o solver_clang_-O0.o wtime_clang_-O0.o -o headless_clang_-O0 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O1
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O1" SUFFIX=_clang_-O1
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O1 headless_clang_-O1.o solver_clang_-O1.o wtime_clang_-O1.o -o headless_clang_-O1 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O2
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O2" SUFFIX=_clang_-O2
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O2 headless_clang_-O2.o solver_clang_-O2.o wtime_clang_-O2.o -o headless_clang_-O2 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O3
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O3" SUFFIX=_clang_-O3
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O3 headless_clang_-O3.o solver_clang_-O3.o wtime_clang_-O3.o -o headless_clang_-O3 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -Ofast
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast" SUFFIX=_clang_-Ofast
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast headless_clang_-Ofast.o solver_clang_-Ofast.o wtime_clang_-Ofast.o -o headless_clang_-Ofast 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O0
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O0" SUFFIX=_icx_-O0
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O0 headless_icx_-O0.o solver_icx_-O0.o wtime_icx_-O0.o -o headless_icx_-O0 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O1
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O1" SUFFIX=_icx_-O1
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O1 headless_icx_-O1.o solver_icx_-O1.o wtime_icx_-O1.o -o headless_icx_-O1 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O2
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O2" SUFFIX=_icx_-O2
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O2 headless_icx_-O2.o solver_icx_-O2.o wtime_icx_-O2.o -o headless_icx_-O2 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O3
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O3" SUFFIX=_icx_-O3
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O3 headless_icx_-O3.o solver_icx_-O3.o wtime_icx_-O3.o -o headless_icx_-O3 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -Ofast
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast" SUFFIX=_icx_-Ofast
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast headless_icx_-Ofast.o solver_icx_-Ofast.o wtime_icx_-Ofast.o -o headless_icx_-Ofast 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O0 128 > tp1/sv/gcc/n128-O0normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O1 128 > tp1/sv/gcc/n128-O1normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O2 128 > tp1/sv/gcc/n128-O2normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O3 128 > tp1/sv/gcc/n128-O3normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-Ofast 128 > tp1/sv/gcc/n128-Ofastnormal.csv;    perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O0 128 > tp1/sv/clang/n128-O0normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O1 128 > tp1/sv/clang/n128-O1normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O2 128 > tp1/sv/clang/n128-O2normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O3 128 > tp1/sv/clang/n128-O3normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-Ofast 128 > tp1/sv/clang/n128-Ofastnormal.csv;    perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O0 128 > tp1/sv/icx/n128-O0normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O1 128 > tp1/sv/icx/n128-O1normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O2 128 > tp1/sv/icx/n128-O2normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O3 128 > tp1/sv/icx/n128-O3normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-Ofast 128 > tp1/sv/icx/n128-Ofastnormal.csv;
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O0 128':
+
+    23,231,450,497      fp_ret_sse_avx_ops.all                                                
+
+      32.629877427 seconds time elapsed
+
+      32.627374000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O1 128':
+
+    23,096,875,579      fp_ret_sse_avx_ops.all                                                
+
+      28.238988253 seconds time elapsed
+
+      28.232777000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 128':
+
+    23,096,865,331      fp_ret_sse_avx_ops.all                                                
+
+      27.581450757 seconds time elapsed
+
+      27.575828000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O3 128':
+
+    23,096,863,283      fp_ret_sse_avx_ops.all                                                
+
+      27.574209728 seconds time elapsed
+
+      27.568558000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-Ofast 128':
+
+    23,029,772,819      fp_ret_sse_avx_ops.all                                                
+
+      21.138278225 seconds time elapsed
+
+      21.133072000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O0 128':
+
+    23,231,450,489      fp_ret_sse_avx_ops.all                                                
+
+      32.174032642 seconds time elapsed
+
+      32.172124000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O1 128':
+
+    21,553,367,571      fp_ret_sse_avx_ops.all                                                
+
+      23.891950759 seconds time elapsed
+
+      23.880790000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 128':
+
+    21,553,367,571      fp_ret_sse_avx_ops.all                                                
+
+      23.862393145 seconds time elapsed
+
+      23.857266000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O3 128':
+
+    22,895,544,883      fp_ret_sse_avx_ops.all                                                
+
+      27.565977581 seconds time elapsed
+
+      27.564165000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-Ofast 128':
+
+    23,398,875,670      fp_ret_sse_avx_ops.all                                                
+
+      21.155980971 seconds time elapsed
+
+      21.154649000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O0 128':
+
+    23,231,450,489      fp_ret_sse_avx_ops.all                                                
+
+      32.142481315 seconds time elapsed
+
+      32.134370000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O1 128':
+
+    21,452,712,457      fp_ret_sse_avx_ops.all                                                
+
+      19.182682187 seconds time elapsed
+
+      19.181654000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 128':
+
+    22,056,692,224      fp_ret_sse_avx_ops.all                                                
+
+      19.101564599 seconds time elapsed
+
+      19.096795000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O3 128':
+
+    22,056,704,512      fp_ret_sse_avx_ops.all                                                
+
+      18.982272590 seconds time elapsed
+
+      18.977133000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=128 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-Ofast 128':
+
+    22,056,704,512      fp_ret_sse_avx_ops.all                                                
+
+      18.987740498 seconds time elapsed
+
+      18.982709000 seconds user
+       0.003999000 seconds sys
+
+
+Building with gcc and flags -O0
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O0" SUFFIX=_gcc_-O0
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O0 headless_gcc_-O0.o solver_gcc_-O0.o wtime_gcc_-O0.o -o headless_gcc_-O0 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -O1
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O1" SUFFIX=_gcc_-O1
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O1 headless_gcc_-O1.o solver_gcc_-O1.o wtime_gcc_-O1.o -o headless_gcc_-O1 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -O2
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O2" SUFFIX=_gcc_-O2
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O2 headless_gcc_-O2.o solver_gcc_-O2.o wtime_gcc_-O2.o -o headless_gcc_-O2 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -O3
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O3" SUFFIX=_gcc_-O3
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -O3 headless_gcc_-O3.o solver_gcc_-O3.o wtime_gcc_-O3.o -o headless_gcc_-O3 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with gcc and flags -Ofast
+make headless CC=gcc CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast" SUFFIX=_gcc_-Ofast
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+gcc -std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast headless_gcc_-Ofast.o solver_gcc_-Ofast.o wtime_gcc_-Ofast.o -o headless_gcc_-Ofast 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O0
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O0" SUFFIX=_clang_-O0
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O0 headless_clang_-O0.o solver_clang_-O0.o wtime_clang_-O0.o -o headless_clang_-O0 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O1
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O1" SUFFIX=_clang_-O1
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O1 headless_clang_-O1.o solver_clang_-O1.o wtime_clang_-O1.o -o headless_clang_-O1 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O2
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O2" SUFFIX=_clang_-O2
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O2 headless_clang_-O2.o solver_clang_-O2.o wtime_clang_-O2.o -o headless_clang_-O2 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -O3
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O3" SUFFIX=_clang_-O3
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -O3 headless_clang_-O3.o solver_clang_-O3.o wtime_clang_-O3.o -o headless_clang_-O3 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with clang and flags -Ofast
+make headless CC=clang CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast" SUFFIX=_clang_-Ofast
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+clang -std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast headless_clang_-Ofast.o solver_clang_-Ofast.o wtime_clang_-Ofast.o -o headless_clang_-Ofast 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O0
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O0" SUFFIX=_icx_-O0
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O0 headless_icx_-O0.o solver_icx_-O0.o wtime_icx_-O0.o -o headless_icx_-O0 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O1
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O1" SUFFIX=_icx_-O1
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O1 headless_icx_-O1.o solver_icx_-O1.o wtime_icx_-O1.o -o headless_icx_-O1 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O2
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O2" SUFFIX=_icx_-O2
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O2 headless_icx_-O2.o solver_icx_-O2.o wtime_icx_-O2.o -o headless_icx_-O2 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -O3
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -O3" SUFFIX=_icx_-O3
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -O3 headless_icx_-O3.o solver_icx_-O3.o wtime_icx_-O3.o -o headless_icx_-O3 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+Building with icx and flags -Ofast
+make headless CC=icx CFLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast" SUFFIX=_icx_-Ofast
+make[1]: Entering directory '/users/cp2025/cp2025_028/navier-stokes'
+icx -std=c11 -Wall -Wextra -Wno-unused-parameter -Ofast headless_icx_-Ofast.o solver_icx_-Ofast.o wtime_icx_-Ofast.o -o headless_icx_-Ofast 
+make[1]: Leaving directory '/users/cp2025/cp2025_028/navier-stokes'
+perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O0 256 > tp1/sv/gcc/n256-O0normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O0 512 > tp1/sv/gcc/n512-O0normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O1 256 > tp1/sv/gcc/n256-O1normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O1 512 > tp1/sv/gcc/n512-O1normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O2 256 > tp1/sv/gcc/n256-O2normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O2 512 > tp1/sv/gcc/n512-O2normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O3 256 > tp1/sv/gcc/n256-O3normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-O3 512 > tp1/sv/gcc/n512-O3normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-Ofast 256 > tp1/sv/gcc/n256-Ofastnormal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_gcc_-Ofast 512 > tp1/sv/gcc/n512-Ofastnormal.csv;    perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O0 256 > tp1/sv/clang/n256-O0normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O0 512 > tp1/sv/clang/n512-O0normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O1 256 > tp1/sv/clang/n256-O1normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O1 512 > tp1/sv/clang/n512-O1normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O2 256 > tp1/sv/clang/n256-O2normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O2 512 > tp1/sv/clang/n512-O2normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O3 256 > tp1/sv/clang/n256-O3normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-O3 512 > tp1/sv/clang/n512-O3normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-Ofast 256 > tp1/sv/clang/n256-Ofastnormal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_clang_-Ofast 512 > tp1/sv/clang/n512-Ofastnormal.csv;    perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O0 256 > tp1/sv/icx/n256-O0normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O0 512 > tp1/sv/icx/n512-O0normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O1 256 > tp1/sv/icx/n256-O1normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O1 512 > tp1/sv/icx/n512-O1normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O2 256 > tp1/sv/icx/n256-O2normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O2 512 > tp1/sv/icx/n512-O2normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O3 256 > tp1/sv/icx/n256-O3normal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-O3 512 > tp1/sv/icx/n512-O3normal.csv;   perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-Ofast 256 > tp1/sv/icx/n256-Ofastnormal.csv;  perf stat -e fp_ret_sse_avx_ops.all ./headless_icx_-Ofast 512 > tp1/sv/icx/n512-Ofastnormal.csv;
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O0 256':
+
+    92,901,004,772      fp_ret_sse_avx_ops.all                                                
+
+     131.823381391 seconds time elapsed
+
+     131.765970000 seconds user
+       0.007997000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O0 512':
+
+   371,562,318,725      fp_ret_sse_avx_ops.all                                                
+
+     535.460214849 seconds time elapsed
+
+     535.270395000 seconds user
+       0.023992000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O1 256':
+
+    92,362,661,213      fp_ret_sse_avx_ops.all                                                
+
+     119.140858440 seconds time elapsed
+
+     119.099632000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O1 512':
+
+   369,406,928,758      fp_ret_sse_avx_ops.all                                                
+
+     503.099898491 seconds time elapsed
+
+     502.953386000 seconds user
+       0.011996000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 256':
+
+    92,362,650,973      fp_ret_sse_avx_ops.all                                                
+
+     117.647327128 seconds time elapsed
+
+     117.627233000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   369,406,918,518      fp_ret_sse_avx_ops.all                                                
+
+     490.878198839 seconds time elapsed
+
+     490.723893000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O3 256':
+
+    92,362,648,925      fp_ret_sse_avx_ops.all                                                
+
+     116.711277139 seconds time elapsed
+
+     116.677692000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O3 512':
+
+   369,406,916,470      fp_ret_sse_avx_ops.all                                                
+
+     488.577028187 seconds time elapsed
+
+     488.375045000 seconds user
+       0.027990000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-Ofast 256':
+
+    92,094,231,800      fp_ret_sse_avx_ops.all                                                
+
+      89.598494101 seconds time elapsed
+
+      89.584810000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-Ofast 512':
+
+   368,333,192,883      fp_ret_sse_avx_ops.all                                                
+
+     374.560517649 seconds time elapsed
+
+     374.444726000 seconds user
+       0.011996000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O0 256':
+
+    92,901,004,772      fp_ret_sse_avx_ops.all                                                
+
+     130.828255794 seconds time elapsed
+
+     130.780688000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O0 512':
+
+   371,562,318,725      fp_ret_sse_avx_ops.all                                                
+
+     531.759628419 seconds time elapsed
+
+     531.591310000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O1 256':
+
+    86,188,641,501      fp_ret_sse_avx_ops.all                                                
+
+     101.782417120 seconds time elapsed
+
+     101.773292000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O1 512':
+
+   344,710,862,710      fp_ret_sse_avx_ops.all                                                
+
+     428.782028199 seconds time elapsed
+
+     428.690669000 seconds user
+       0.007998000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 256':
+
+    86,188,641,517      fp_ret_sse_avx_ops.all                                                
+
+     101.931081152 seconds time elapsed
+
+     101.893144000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   344,710,862,710      fp_ret_sse_avx_ops.all                                                
+
+     428.234188863 seconds time elapsed
+
+     428.074864000 seconds user
+       0.015995000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O3 256':
+
+    91,557,350,749      fp_ret_sse_avx_ops.all                                                
+
+     117.310496495 seconds time elapsed
+
+     117.267383000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O3 512':
+
+   366,185,699,190      fp_ret_sse_avx_ops.all                                                
+
+     485.153103324 seconds time elapsed
+
+     485.047422000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-Ofast 256':
+
+    93,570,630,903      fp_ret_sse_avx_ops.all                                                
+
+      89.826952415 seconds time elapsed
+
+      89.793110000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-Ofast 512':
+
+   374,238,777,001      fp_ret_sse_avx_ops.all                                                
+
+     379.939318708 seconds time elapsed
+
+     379.800486000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O0 256':
+
+    92,901,004,772      fp_ret_sse_avx_ops.all                                                
+
+     129.541402776 seconds time elapsed
+
+     129.523348000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O0 512':
+
+   371,562,318,725      fp_ret_sse_avx_ops.all                                                
+
+     529.538358661 seconds time elapsed
+
+     529.386335000 seconds user
+       0.007998000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O1 256':
+
+    85,785,996,457      fp_ret_sse_avx_ops.all                                                
+
+      81.499089132 seconds time elapsed
+
+      81.482097000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O1 512':
+
+   343,100,257,974      fp_ret_sse_avx_ops.all                                                
+
+     344.940489986 seconds time elapsed
+
+     344.852794000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 256':
+
+    88,201,915,561      fp_ret_sse_avx_ops.all                                                
+
+      81.587323504 seconds time elapsed
+
+      81.577547000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   352,763,934,390      fp_ret_sse_avx_ops.all                                                
+
+     345.377646614 seconds time elapsed
+
+     345.277331000 seconds user
+       0.007998000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O3 256':
+
+    88,201,927,867      fp_ret_sse_avx_ops.all                                                
+
+      82.273533099 seconds time elapsed
+
+      82.247917000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O3 512':
+
+   352,763,946,615      fp_ret_sse_avx_ops.all                                                
+
+     342.670000626 seconds time elapsed
+
+     342.566520000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=256 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-Ofast 256':
+
+    88,201,927,858      fp_ret_sse_avx_ops.all                                                
+
+      82.223237127 seconds time elapsed
+
+      82.209893000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-Ofast 512':
+
+   352,763,946,678      fp_ret_sse_avx_ops.all                                                
+
+     346.972343809 seconds time elapsed
+
+     346.860874000 seconds user
+       0.003999000 seconds sys
+
+
