@@ -25,7 +25,7 @@ plt.title(f"Celdas por segundo por muestra, compilador {sys.argv[2]}, tamaño {s
 plt.xticks(rotation=45, ha="right")  
 plt.tight_layout()  
 
-plt.ylim(bottom=800)
+plt.ylim(bottom=300)
 # plt.show()
 
 plt.savefig(f"n {sys.argv[1].replace('../', '')} {sys.argv[2]} {sys.argv[3]}.png") 
