@@ -38,11 +38,12 @@ def extract_data(input_file, output_folder='output'):
     # Escribimos los archivos CSV
     for n, data in results.items():
         output_path = os.path.join(output_folder,f'Flopsn{n}.csv')
-        with open(output_path, 'w') as f_out:
+        file_exists = os.path.exists(output_path)  # Verifica si el archivo ya existe
+        with open(output_path, 'a' if file_exists else 'w') as f_out:
             # f_out.write("fp_operations,user_seconds\n")
             for row in data:
                 if len(row) == 2:  # Aseguramos que tenemos ambos valores
                     f_out.write(f"{row[0]},{row[1]}\n")
 
 # Uso del script
-extract_data("aux.txt","icx")
+extract_data("nohup.out","icx")
