@@ -19,9 +19,9 @@ means_df_sorted['File Name'] = means_df_sorted['File Name'].str.replace(f"{sys.a
 
 plt.figure(figsize=(10, 6))  
 plt.bar(means_df_sorted['File Name'], means_df_sorted['Mean'])
-plt.xlabel(f"Muestra")
+plt.xlabel(f"Optimización")
 plt.ylabel("Varianza")
-plt.title(f"Varianza de celdas por segundo por muestra, compilador {sys.argv[2]}, tamaño {sys.argv[3]}")
+plt.title(f"Varianza de celdas por segundo por optimización, compilador {sys.argv[2]}, tamaño {sys.argv[3]}")
 plt.xticks(rotation=45, ha="right")  
 plt.tight_layout()  
 
