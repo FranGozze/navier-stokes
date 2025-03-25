@@ -4,3 +4,4 @@ headless
 *.o
 tp1/sv/nohup.out
 venv
+tp1/svOld/

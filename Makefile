@@ -59,7 +59,7 @@ run: all
 
 # Limpieza
 clean:
-	rm -f $(TARGETS) *.o .depend *~ headless_* output_*.txt
+	rm -f $(TARGETS) *.o .depend *~ headless_* output*.txt demo
 
 # Dependencias
 .depend: *.[ch]
