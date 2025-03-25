@@ -1,49 +1,82 @@
-# Para ejecutar el script, primero se debe crear el archivo aux.txt con el contenido del compilador que nos interese obtener. Esto se obtiene de ver en el archivo "nohup.out" del servidor. Lo unico que tenes que poner en "aux.txt" son las lineas que contengan el compilador. Mejorar para automatizar esto.
-
 import re
-import os  # <- Añade esta línea
+import csv
+import os
+from pprint import pprint
+from collections import defaultdict
 
-def extract_data(input_file, output_folder='output'):
-    # Diccionario para guardar los resultados por N
-    results = {'128': [], '256': [], '512': []}
+def parse_file(filename):
+    data = defaultdict(lambda: defaultdict(list))
     
-    with open(input_file, 'r') as f:
-        current_block = []
-        current_n = None
-        
-        for line in f:
-            line = line.strip()
-            
-            # Detectamos el inicio de un nuevo bloque (línea con N=)
-            if line.startswith('Using defaults : N='):
-                if current_n and current_block:
-                    results[current_n].append(current_block)
-                current_n = line.split('N=')[1].split()[0]
-                current_block = []
-            
-            # Extraemos el valor antes de fp_ret_sse_avx_ops.all
-            elif 'fp_ret_sse_avx_ops.all' in line:
-                fp_value = line.split()[0]
-                current_block.append(fp_value.replace(',', ''))
-            
-            # Extraemos el valor antes de seconds user
-            elif 'seconds user' in line:
-                user_value = line.split()[0]
-                current_block.append(user_value)
-        
-        # Añadimos el último bloque
-        if current_n and current_block:
-            results[current_n].append(current_block)
+    with open(filename, 'r') as file:
+        content = file.read()
     
-    # Escribimos los archivos CSV
-    for n, data in results.items():
-        output_path = os.path.join(output_folder,f'Flopsn{n}.csv')
-        file_exists = os.path.exists(output_path)  # Verifica si el archivo ya existe
-        with open(output_path, 'a' if file_exists else 'w') as f_out:
-            # f_out.write("fp_operations,user_seconds\n")
-            for row in data:
-                if len(row) == 2:  # Aseguramos que tenemos ambos valores
-                    f_out.write(f"{row[0]},{row[1]}\n")
+    # Dividir el contenido en bloques usando el patrón "Using defaults" como separador
+    blocks = re.split(r'Using defaults :', content)[1:]  # Ignorar el primer elemento vacío
+    
+    for block in blocks:
+        try:
+            # Extraer N del primer renglón
+            N_match = re.search(r'N=(\d+)', block)
+            if not N_match:
+                continue
+            N = N_match.group(1)
+            
+            # Extraer el compilador
+            compiler_match = re.search(r"headless_([^_\s]+)", block)
+            if not compiler_match:
+                continue
+            compiler = compiler_match.group(1)
+            
+            # Extraer fp_ops
+            fp_ops_match = re.search(r'(\d[\d,]+)\s+fp_ret_sse_avx_ops\.all', block)
+            if not fp_ops_match:
+                continue
+            fp_ops = fp_ops_match.group(1).replace(',', '')
+            
+            # Extraer user time
+            user_time_match = re.search(r'(\d+\.\d+)\s+seconds user', block)
+            if not user_time_match:
+                continue
+            user_time = user_time_match.group(1)
+            
+            # Almacenar los datos
+            data[compiler][N].append({
+                'fp_ops': fp_ops,
+                'user_time': user_time
+            })
+            
+        except Exception as e:
+            print(f"Error procesando bloque: {e}")
+            print(f"Bloque problemático:\n{block[:200]}...")
+            continue
+    
+    return data
 
-# Uso del script
-extract_data("nohup.out","icx")
+def write_csv_files(data):
+    for compiler, n_data in data.items():
+        for N, entries in n_data.items():
+            output_path = os.path.join(compiler,f'Flopsn{N}.csv')
+            file_exists = os.path.exists(output_path)  # Verifica si el archivo ya existe
+            with open(output_path, 'a' if file_exists else 'w') as csvfile:
+                writer = csv.writer(csvfile)
+                # writer.writerow(['fp_ops', 'user_time'])
+                for entry in entries:
+                    writer.writerow([entry['fp_ops'], entry['user_time']])
+            print(f"Archivo creado: {output_path}")
+
+def main():
+    input_filename = 'nohup.out'  # Cambia esto por tu archivo real
+    
+    print(f"Procesando archivo: {input_filename}")
+    data = parse_file(input_filename)
+    
+    # Mostrar estadísticas de lo procesado
+    pprint(dict(data))
+    if data:
+        write_csv_files(data)
+        print("\nArchivos CSV generados exitosamente!")
+    else:
+        print("\nNo se encontraron datos válidos en el archivo.")
+
+if __name__ == "__main__":
+    main()
