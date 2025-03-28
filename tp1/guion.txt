@@ -1,0 +1,15 @@
+Guion:
+    - Hablar del porque decidimos usar el servidor para hacer testeos
+
+    - Hablar un poco sobre el servidor donde corrimos todo corrimos (hardware) y mostrar benchmarks
+
+    - Repetir en varios compiladores (gcc, Clang, icx):
+        - Correr sin optimizaciones
+        - Correr con todos los O
+        - mostrar assembler (opcional)
+    - Correr las optimizacion con -march=native 
+             - mostrar assembler (opcional)
+
+    - Correr las mejores optimizaciones y compiladores con el blocking y explicar con un dibujito porque el mismo funciona bien
+
+    - Como ultimo caso, ver que con la bandera activa de punteros de 32 bits hay una mejoria de alrededor del 5%.
