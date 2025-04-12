@@ -1,3 +1,4 @@
+import math
 import pandas as pd
 import glob
 import matplotlib.pyplot as plt
@@ -9,13 +10,15 @@ var_dict = {}
 for file in csv_files:
     df = pd.read_csv(file)
     var_value = df.iloc[:, 0].var()  
-    var_dict[file] = var_value
+    var_dict[file] = math.sqrt(var_value)
 
 means_df = pd.DataFrame(list(var_dict.items()), columns=['File Name', 'Mean'])
 
 means_df_sorted = means_df.sort_values(by='Mean', ascending=False)
 
 means_df_sorted['File Name'] = means_df_sorted['File Name'].str.replace(f"{sys.argv[1]}/{sys.argv[2]}/{sys.argv[3]}/", "").str.replace("../sv/clang/", "").str.replace(".csv", "")
+
+print("var",sys.argv[3],means_df_sorted)
 
 plt.figure(figsize=(10, 6))  
 plt.bar(means_df_sorted['File Name'], means_df_sorted['Mean'])
