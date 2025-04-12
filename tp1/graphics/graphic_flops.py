@@ -9,10 +9,14 @@ print(f"procesando archivo {sys.argv[1]}/{sys.argv[2]}/Flopsn{sys.argv[3]}.csv")
 
 df['result'] = df[1] / df[2]
 
-labels = df[0].str.strip()  # Get labels from first column and remove whitespace
+
+means_df_sorted = df.sort_values(by='result', ascending=False)
+labels = means_df_sorted[0].str.strip()  # Get labels from first column and remove whitespace
+
+print("flops",sys.argv[3],means_df_sorted)
 
 plt.figure(figsize=(10, 6))  # Set figure size
-plt.bar(labels, df['result'])  
+plt.bar(labels, means_df_sorted['result'])  
 plt.xlabel('Optimización')
 plt.ylabel('FLOPS')
 plt.title(f"FLOPS por optimización, compilador {sys.argv[2]}, tamaño {sys.argv[3]}")

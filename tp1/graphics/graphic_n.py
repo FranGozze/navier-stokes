@@ -17,11 +17,13 @@ means_df_sorted = means_df.sort_values(by='Mean', ascending=False)
 
 means_df_sorted['File Name'] = means_df_sorted['File Name'].str.replace(f"{sys.argv[1]}/{sys.argv[2]}/{sys.argv[3]}/", "").str.replace("../sv/clang/", "").str.replace(".csv", "")
 
+print("n",sys.argv[3],means_df_sorted)
+
 plt.figure(figsize=(10, 6))  
 plt.bar(means_df_sorted['File Name'], means_df_sorted['Mean'])
 plt.xlabel(f"Optimización")
 plt.ylabel("Promedio de cálculo de celdas por nanosegundo")
-plt.title(f"Celdas por segundo por optimización, compilador {sys.argv[2]}, tamaño {sys.argv[3]}")
+plt.title(f"Celdas por nanosegundo por optimización, compilador {sys.argv[2]}, tamaño {sys.argv[3]}")
 plt.xticks(rotation=45, ha="right")  
 plt.tight_layout()  
 
