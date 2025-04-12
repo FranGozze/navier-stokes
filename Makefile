@@ -11,7 +11,7 @@ VALUES=128
 CC=gcc
 
 # Flags por defecto
-CFLAGS=-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native  -funsafe-math-optimizations -fopt-info -ftree-vectorize
+CFLAGS=-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native
 LDFLAGS=
 
 # Sufijo para el nombre del ejecutable
@@ -56,6 +56,9 @@ run: all
 			$(foreach value,$(VALUES),\
 				perf stat -e fp_ret_sse_avx_ops.all ./headless_$(compiler)_$(flags) $(value) \
 					 > tp1/sv/$(compiler)/n$(value)$(flags)$(SUFFIXX).csv;)))
+
+demo.o: demo.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 demo: demo.o $(COMMON_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) -lGL -lGLU -lglut
