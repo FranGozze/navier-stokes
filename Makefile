@@ -1,8 +1,8 @@
 # Compiladores disponibles
-COMPILERS=gcc clang icx
+COMPILERS=gcc
 
 # Flags adicionales
-EXTRA_FLAGS=-O0 -O1 -O2 -O3 -Ofast
+EXTRA_FLAGS=-O1
 
 # Lista de valores numéricos para ejecutar
 VALUES=128
@@ -11,7 +11,7 @@ VALUES=128
 CC=gcc
 
 # Flags por defecto
-CFLAGS=-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native
+CFLAGS=-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native -funsafe-math-optimizations -fopt-info -ftree-vectorize
 LDFLAGS=
 
 # Sufijo para el nombre del ejecutable
@@ -55,7 +55,7 @@ run: all
 		$(foreach flags,$(EXTRA_FLAGS),\
 			$(foreach value,$(VALUES),\
 				perf stat -e fp_ret_sse_avx_ops.all ./headless_$(compiler)_$(flags) $(value) \
-					 > tp1/sv/$(compiler)/n$(value)$(flags)$(SUFFIXX).csv;)))
+					 > tp2/sv/$(compiler)/n$(value)$(flags)$(SUFFIXX).csv;)))
 
 demo.o: demo.c
 	$(CC) $(CFLAGS) -c $< -o $@
