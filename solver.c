@@ -2,6 +2,7 @@
 
 #include "solver.h"
 
+#define GROUP_SIZE 8
 #define IX(i, j) ((i) + (n + 2) * (j))
 #define SWAP(x0, x)      \
     {                    \
@@ -38,13 +39,28 @@ static void set_bnd(unsigned int n, boundary b, float* x)
     x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
 }
 
+
 static void lin_solve(unsigned int n, boundary b, float* x, const float* x0, float a, float c)
 {
     for (unsigned int k = 0; k < 20; k++) {
         for (unsigned int j = 1; j <= n; j++) {
-            for (unsigned int i = 1; i <= n; i++) {
-                // possible vectorization ( con la division de c)
-                x[IX(i, j)] = (x0[IX(i, j)] + a * (x[IX(i - 1, j)] + x[IX(i + 1, j)] + x[IX(i, j - 1)] + x[IX(i, j + 1)])) / c;
+            unsigned int i = 1;
+            for (; i <= n - (GROUP_SIZE - 1); i += GROUP_SIZE) {
+                float x_up[GROUP_SIZE] = {x[IX(i, j-1)], x[IX(i+1, j-1)], x[IX(i+2, j-1)], x[IX(i+3, j-1)],x[IX(i+4, j-1)], x[IX(i+5, j-1)], x[IX(i+6, j-1)], x[IX(i+7, j-1)]};
+                float x_left[GROUP_SIZE] = {x[IX(i-1, j)], x[IX(i, j)], x[IX(i+1, j)], x[IX(i+2, j)],x[IX(i+3, j)], x[IX(i+4, j)], x[IX(i+5, j)], x[IX(i+6, j)]};
+                float x_right[GROUP_SIZE] = {x[IX(i+1, j)], x[IX(i+2, j)], x[IX(i+3, j)], x[IX(i+4, j)],x[IX(i+5, j)], x[IX(i+6, j)], x[IX(i+7, j)], x[IX(i+8, j)]};
+                float x_down[GROUP_SIZE] = {x[IX(i, j+1)], x[IX(i+1, j+1)], x[IX(i+2, j+1)], x[IX(i+3, j+1)],x[IX(i+4, j+1)], x[IX(i+5, j+1)], x[IX(i+6, j+1)], x[IX(i+7, j+1)]};
+                
+                float x0_vals[GROUP_SIZE] = {x0[IX(i, j)], x0[IX(i+1, j)], x0[IX(i+2, j)], x0[IX(i+3, j)],x0[IX(i+4, j)], x0[IX(i+5, j)], x0[IX(i+6, j)], x0[IX(i+7, j)]};
+                
+                for (int m = 0; m < GROUP_SIZE; m++) {
+                    x[IX(i+m, j)] = (x0_vals[m] + a * (x_left[m] + x_right[m] + x_up[m] + x_down[m])) / c;
+                }
+            }
+            
+            for (; i <= n; i++) {
+                x[IX(i, j)] = (x0[IX(i, j)] + a * (x[IX(i-1, j)] + x[IX(i+1, j)] + 
+                                                  x[IX(i, j-1)] + x[IX(i, j+1)])) / c;
             }
         }
         set_bnd(n, b, x);

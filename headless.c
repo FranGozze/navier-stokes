@@ -112,6 +112,9 @@ static void react(float* d, float* u, float* v)
         }
     }
 
+    // Vectorized in compiled version
+    // headless.c:115:19: optimized: loop vectorized using 32 byte vectors
+    // headless.c:115:19: optimized:  loop versioned for vectorization because of possible aliasing
     for (i = 0; i < size; i++) {
         u[i] = v[i] = d[i] = 0.0f;
     }
