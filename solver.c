@@ -27,25 +27,56 @@ static void add_source(unsigned int n, float* x, const float* s, float dt)
 static void set_bnd(unsigned int n, boundary b, float* x)
 {
     int vertical = b == VERTICAL, horizontal = b == HORIZONTAL;
+
     float vmask = vertical ? -1.0f : 1.0f;
-    float hmask = horizontal ? -1.0f : 1.0f;
-    for (unsigned int i = 1; i <= n - (GROUP_SIZE - 1); i += GROUP_SIZE) {
-        float x_up[GROUP_SIZE] = { vmask * x[IX(1, i)], vmask * x[IX(1, i + 1)], vmask * x[IX(1, i + 2)], vmask * x[IX(1, i + 3)], vmask * x[IX(1, i + 4)], vmask * x[IX(1, i + 5)], vmask * x[IX(1, i + 6)], vmask * x[IX(1, i + 7)] };
+    // __m256 vmask = _mm256_set1_ps(vertical ? -1.0f : 1.0f);
+    // float hmask = horizontal ? -1.0f : 1.0f;
+    __m256 hmask = _mm256_set1_ps(horizontal ? -1.0f : 1.0f);
 
-        float x_down[GROUP_SIZE] = { vmask * x[IX(n, i)], vmask * x[IX(n, i + 1)], vmask * x[IX(n, i + 2)], vmask * x[IX(n, i + 3)], vmask * x[IX(n, i + 4)], vmask * x[IX(n, i + 5)], vmask * x[IX(n, i + 6)], vmask * x[IX(n, i + 7)] };
+    for (unsigned int i = 1; i <= n - 7; i += 8) {
 
-        float x_left[GROUP_SIZE] = { hmask * x[IX(i, 1)], hmask * x[IX(i + 1, 1)], hmask * x[IX(i + 2, 1)], hmask * x[IX(i + 3, 1)], hmask * x[IX(i + 4, 1)], hmask * x[IX(i + 5, 1)], hmask * x[IX(i + 6, 1)], hmask * x[IX(i + 7, 1)] };
+        __m256 x_left = _mm256_loadu_ps(&x[IX(i, 1)]);
+        __m256 x_right = _mm256_loadu_ps(&x[IX(i, n)]);
+        // Store the modified values back to the array
+        _mm256_storeu_ps(&x[IX(i, 0)], _mm256_mul_ps(x_left, hmask));
+        _mm256_storeu_ps(&x[IX(i, n + 1)], _mm256_mul_ps(x_right, hmask));
 
-        float x_right[GROUP_SIZE] = { hmask * x[IX(i, n)], hmask * x[IX(i + 1, n)], hmask * x[IX(i + 2, n)], hmask * x[IX(i + 3, n)], hmask * x[IX(i + 4, n)], hmask * x[IX(i + 5, n)], hmask * x[IX(i + 6, n)], hmask * x[IX(i + 7, n)] };
+        // float aux_up[8] = { x[IX(1, i)], x[IX(1, i + 1)], x[IX(1, i + 2)], x[IX(1, i + 3)], x[IX(1, i + 4)], x[IX(1, i + 5)], x[IX(1, i + 6)], x[IX(1, i + 7)] };
+        // __m256 x_up = _mm256_loadu_ps(&aux_up[0]);
+        // float aux_down[8] = { x[IX(n, i)], x[IX(n, i + 1)], x[IX(n, i + 2)], x[IX(n, i + 3)], x[IX(n, i + 4)], x[IX(n, i + 5)], x[IX(n, i + 6)], x[IX(n, i + 7)] };
+        // __m256 x_down = _mm256_loadu_ps(&aux_down[0]);
 
+
+        // _mm256_storeu_ps(&aux_up[0], _mm256_mul_ps(x_up, vmask));
+        // _mm256_storeu_ps(&aux_down[0], _mm256_mul_ps(x_down, vmask));
+        float aux_up[GROUP_SIZE] = { vmask * x[IX(1, i)], vmask * x[IX(1, i + 1)], vmask * x[IX(1, i + 2)], vmask * x[IX(1, i + 3)], vmask * x[IX(1, i + 4)], vmask * x[IX(1, i + 5)], vmask * x[IX(1, i + 6)], vmask * x[IX(1, i + 7)] };
+
+        float aux_down[GROUP_SIZE] = { vmask * x[IX(n, i)], vmask * x[IX(n, i + 1)], vmask * x[IX(n, i + 2)], vmask * x[IX(n, i + 3)], vmask * x[IX(n, i + 4)], vmask * x[IX(n, i + 5)], vmask * x[IX(n, i + 6)], vmask * x[IX(n, i + 7)] };
 
         for (int m = 0; m < GROUP_SIZE; m++) {
-            x[IX(0, i + m)] = x_up[m];
-            x[IX(n + 1, i + m)] = x_down[m];
-            x[IX(i + m, 0)] = x_left[m];
-            x[IX(i + m, n + 1)] = x_right[m];
+            x[IX(0, i + m)] = aux_up[m];
+            x[IX(n + 1, i + m)] = aux_down[m];
         }
     }
+
+    // for (unsigned int i = 1; i <= n - (GROUP_SIZE - 1); i += GROUP_SIZE) {
+
+    //     float x_up[GROUP_SIZE] = { vmask * x[IX(1, i)], vmask * x[IX(1, i + 1)], vmask * x[IX(1, i + 2)], vmask * x[IX(1, i + 3)], vmask * x[IX(1, i + 4)], vmask * x[IX(1, i + 5)], vmask * x[IX(1, i + 6)], vmask * x[IX(1, i + 7)] };
+
+    //     float x_down[GROUP_SIZE] = { vmask * x[IX(n, i)], vmask * x[IX(n, i + 1)], vmask * x[IX(n, i + 2)], vmask * x[IX(n, i + 3)], vmask * x[IX(n, i + 4)], vmask * x[IX(n, i + 5)], vmask * x[IX(n, i + 6)], vmask * x[IX(n, i + 7)] };
+
+    //     // float x_left[GROUP_SIZE] = { hmask * x[IX(i, 1)], hmask * x[IX(i + 1, 1)], hmask * x[IX(i + 2, 1)], hmask * x[IX(i + 3, 1)], hmask * x[IX(i + 4, 1)], hmask * x[IX(i + 5, 1)], hmask * x[IX(i + 6, 1)], hmask * x[IX(i + 7, 1)] };
+
+    //     // float x_right[GROUP_SIZE] = { hmask * x[IX(i, n)], hmask * x[IX(i + 1, n)], hmask * x[IX(i + 2, n)], hmask * x[IX(i + 3, n)], hmask * x[IX(i + 4, n)], hmask * x[IX(i + 5, n)], hmask * x[IX(i + 6, n)], hmask * x[IX(i + 7, n)] };
+
+
+    //     for (int m = 0; m < GROUP_SIZE; m++) {
+    //         x[IX(0, i + m)] = x_up[m];
+    //         x[IX(n + 1, i + m)] = x_down[m];
+    //         // x[IX(i + m, 0)] = x_left[m];
+    //         // x[IX(i + m, n + 1)] = x_right[m];
+    //     }
+    // }
 
 
     x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
