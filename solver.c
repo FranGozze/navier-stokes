@@ -29,12 +29,22 @@ static void set_bnd(unsigned int n, boundary b, float* x)
     int vertical = b == VERTICAL, horizontal = b == HORIZONTAL;
     float vmask = vertical ? -1.0f : 1.0f;
     float hmask = horizontal ? -1.0f : 1.0f;
-    for (unsigned int i = 1; i <= n; i++) {
+    for (unsigned int i = 1; i <= n - (GROUP_SIZE - 1); i += GROUP_SIZE) {
+        float x_up[GROUP_SIZE] = { vmask * x[IX(1, i)], vmask * x[IX(1, i + 1)], vmask * x[IX(1, i + 2)], vmask * x[IX(1, i + 3)], vmask * x[IX(1, i + 4)], vmask * x[IX(1, i + 5)], vmask * x[IX(1, i + 6)], vmask * x[IX(1, i + 7)] };
 
-        x[IX(0, i)] = vertical ? -x[IX(1, i)] : x[IX(1, i)];
-        x[IX(n + 1, i)] = vertical ? -x[IX(n, i)] : x[IX(n, i)];
-        x[IX(i, 0)] = horizontal ? -x[IX(i, 1)] : x[IX(i, 1)];
-        x[IX(i, n + 1)] = horizontal ? -x[IX(i, n)] : x[IX(i, n)];
+        float x_down[GROUP_SIZE] = { vmask * x[IX(n, i)], vmask * x[IX(n, i + 1)], vmask * x[IX(n, i + 2)], vmask * x[IX(n, i + 3)], vmask * x[IX(n, i + 4)], vmask * x[IX(n, i + 5)], vmask * x[IX(n, i + 6)], vmask * x[IX(n, i + 7)] };
+
+        float x_left[GROUP_SIZE] = { hmask * x[IX(i, 1)], hmask * x[IX(i + 1, 1)], hmask * x[IX(i + 2, 1)], hmask * x[IX(i + 3, 1)], hmask * x[IX(i + 4, 1)], hmask * x[IX(i + 5, 1)], hmask * x[IX(i + 6, 1)], hmask * x[IX(i + 7, 1)] };
+
+        float x_right[GROUP_SIZE] = { hmask * x[IX(i, n)], hmask * x[IX(i + 1, n)], hmask * x[IX(i + 2, n)], hmask * x[IX(i + 3, n)], hmask * x[IX(i + 4, n)], hmask * x[IX(i + 5, n)], hmask * x[IX(i + 6, n)], hmask * x[IX(i + 7, n)] };
+
+
+        for (int m = 0; m < GROUP_SIZE; m++) {
+            x[IX(0, i + m)] = x_up[m];
+            x[IX(n + 1, i + m)] = x_down[m];
+            x[IX(i + m, 0)] = x_left[m];
+            x[IX(i + m, n + 1)] = x_right[m];
+        }
     }
 
 
