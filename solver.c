@@ -93,11 +93,11 @@ static void lin_solve(unsigned int n, boundary b, float* x, const float* x0, flo
     const __m256 c_recip = _mm256_set1_ps(1.0f / c);
 
     for (unsigned int k = 0; k < 20; k++) {
-        for (unsigned int i = 1; i <= n; i++) {
-            unsigned int j = 1;
+        for (unsigned int j = 1; j <= n; j++) {
+            unsigned int i = 1;
 
             // Process 8 elements at a time with AVX
-            for (; j <= n - 7; j += 8) {
+            for (; i <= n - 7; i += 8) {
                 // Load surrounding values
                 __m256 x_up = _mm256_loadu_ps(&x[IX(i, j - 1)]);
                 __m256 x_left = _mm256_loadu_ps(&x[IX(i - 1, j)]);
@@ -124,7 +124,7 @@ static void lin_solve(unsigned int n, boundary b, float* x, const float* x0, flo
             }
 
             // Process remaining elements
-            for (; j <= n; j++) {
+            for (; i <= n; i++) {
                 x[IX(i, j)] = (x0[IX(i, j)] + a * (x[IX(i - 1, j)] + x[IX(i + 1, j)] + x[IX(i, j - 1)] + x[IX(i, j + 1)])) / c;
             }
         }
