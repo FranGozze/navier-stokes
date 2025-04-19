@@ -4,4 +4,5 @@ Linsolve w/ intrinsics and sndbnd intrinsics,316722303616,71.574457000
 Linsolve w/ intrinsics and setbnd upgraded wo/ intrinsics,316722303616,72.871713000
 Linsolve upgraded wo/ intrinsics (GROUP_SIZE 8),363501387422,49.331502000
 Linsolve upgraded wo/ intrinsics (GROUP_SIZE 16),363501387422,109.670464000
+"Linsolve and advect w/ intrisics, setbnd  mixed",347323949761,79.817086000
 "Base (wo any upgrade -Ofast, -march=native on icx)",363501367792,194.598391000
