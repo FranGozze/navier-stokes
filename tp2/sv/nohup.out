@@ -1,0 +1,300 @@
+Name: "Linsolve w/ intrinsics and sndbnd default"
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   368,333,180,638      fp_ret_sse_avx_ops.all                                                
+
+      20.821379837 seconds time elapsed
+
+      20.810825000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   342,026,544,798      fp_ret_sse_avx_ops.all                                                
+
+      20.654481547 seconds time elapsed
+
+      20.640338000 seconds user
+       0.007998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   342,026,512,030      fp_ret_sse_avx_ops.all                                                
+
+      22.743491870 seconds time elapsed
+
+      22.733699000 seconds user
+       0.007999000 seconds sys
+
+Name: "Linsolve w/ intrinsics and sndbnd mixed"
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   368,798,748,382      fp_ret_sse_avx_ops.all                                                
+
+      20.734990560 seconds time elapsed
+
+      20.727830000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   342,492,112,542      fp_ret_sse_avx_ops.all                                                
+
+      20.248764818 seconds time elapsed
+
+      20.239371000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   342,492,079,774      fp_ret_sse_avx_ops.all                                                
+
+      22.887892692 seconds time elapsed
+
+      22.874628000 seconds user
+       0.003998000 seconds sys
+
+
+Name: "Linsolve w/ intrinsics and sndbnd intrinsics"
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   368,798,748,382      fp_ret_sse_avx_ops.all                                                
+
+      20.816192519 seconds time elapsed
+
+      20.802770000 seconds user
+       0.007999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   342,492,112,542      fp_ret_sse_avx_ops.all                                                
+
+      20.255453274 seconds time elapsed
+
+      20.248158000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   342,492,079,774      fp_ret_sse_avx_ops.all                                                
+
+      22.804235178 seconds time elapsed
+
+      22.798502000 seconds user
+       0.003999000 seconds sys
+
+
+Name: "Linsolve w/ intrinsics and setbnd upgraded wo/ intrinsics"
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   368,798,748,382      fp_ret_sse_avx_ops.all                                                
+
+      20.593336105 seconds time elapsed
+
+      20.584917000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   342,492,112,542      fp_ret_sse_avx_ops.all                                                
+
+      20.377705410 seconds time elapsed
+
+      20.358597000 seconds user
+       0.007996000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   342,492,079,774      fp_ret_sse_avx_ops.all                                                
+
+      22.893637605 seconds time elapsed
+
+      22.888013000 seconds user
+       0.003999000 seconds sys
+
+
+Name: "Linsolve upgraded wo/ intrinsics (GROUP_SIZE 8)"
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   368,333,180,638      fp_ret_sse_avx_ops.all                                                
+
+      68.455370067 seconds time elapsed
+
+      68.441479000 seconds user
+       0.000000000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   363,501,387,422      fp_ret_sse_avx_ops.all                                                
+
+      52.243774670 seconds time elapsed
+
+      52.222828000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   363,501,354,654      fp_ret_sse_avx_ops.all                                                
+
+      76.355242383 seconds time elapsed
+
+      76.320649000 seconds user
+       0.003998000 seconds sys
+
+
+Name: "Linsolve upgraded wo/ intrinsics (GROUP_SIZE 16)"
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   368,333,180,638      fp_ret_sse_avx_ops.all                                                
+
+      80.375194148 seconds time elapsed
+
+      80.364772000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   363,501,387,422      fp_ret_sse_avx_ops.all                                                
+
+     100.268768446 seconds time elapsed
+
+     100.244906000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   363,501,354,654      fp_ret_sse_avx_ops.all                                                
+
+      73.495565932 seconds time elapsed
+
+      73.475715000 seconds user
+       0.007998000 seconds sys
+
+
+Name: "Linsolve and advect w/ intrisics, setbnd  mixed"
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2 512':
+
+   368,798,756,520      fp_ret_sse_avx_ops.all
+
+      25.520488506 seconds time elapsed
+
+      25.513323000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2 512':
+
+   345,713,338,034      fp_ret_sse_avx_ops.all
+
+      24.580205227 seconds time elapsed
+
+      24.570058000 seconds user
+       0.003999000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2 512':
+
+   347,323,917,994      fp_ret_sse_avx_ops.all
+
+      27.562486415 seconds time elapsed
+
+      27.555402000 seconds user
+       0.004000000 seconds sys
+
+
+
+Name: "Base (wo any upgrade -Ofast, -march=native on icx)"
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-Ofast 512':
+
+   368,333,192,428      fp_ret_sse_avx_ops.all                                                
+
+     328.762273533 seconds time elapsed
+
+     328.649863000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-Ofast 512':
+
+   363,501,394,862      fp_ret_sse_avx_ops.all                                                
+
+     273.261944689 seconds time elapsed
+
+     273.168792000 seconds user
+       0.003998000 seconds sys
+
+
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-Ofast 512':
+
+   363,501,367,792      fp_ret_sse_avx_ops.all                                                
+
+     194.670311006 seconds time elapsed
+
+     194.598391000 seconds user
+       0.007997000 seconds sys
+
+
