@@ -93,11 +93,11 @@ static void lin_solve(unsigned int n, boundary b, float* x, const float* x0, flo
     const __m256 c_recip = _mm256_set1_ps(1.0f / c);
 
     for (unsigned int k = 0; k < 20; k++) {
-        for (unsigned int j = 1; j <= n; j++) {
-            unsigned int i = 1;
+        for (unsigned int i = 1; i <= n; i++) {
+            unsigned int j = 1;
 
             // Process 8 elements at a time with AVX
-            for (; i <= n - 7; i += 8) {
+            for (; j <= n - 7; j += 8) {
                 // Load surrounding values
                 __m256 x_up = _mm256_loadu_ps(&x[IX(i, j - 1)]);
                 __m256 x_left = _mm256_loadu_ps(&x[IX(i - 1, j)]);
@@ -124,7 +124,7 @@ static void lin_solve(unsigned int n, boundary b, float* x, const float* x0, flo
             }
 
             // Process remaining elements
-            for (; i <= n; i++) {
+            for (; j <= n; j++) {
                 x[IX(i, j)] = (x0[IX(i, j)] + a * (x[IX(i - 1, j)] + x[IX(i + 1, j)] + x[IX(i, j - 1)] + x[IX(i, j + 1)])) / c;
             }
         }
@@ -136,6 +136,7 @@ static void diffuse(unsigned int n, boundary b, float* x, const float* x0, float
     float a = dt * diff * n * n;
     lin_solve(n, b, x, x0, a, 1 + 4 * a);
 }
+
 
 static void advect(unsigned int n, boundary b, float* d, const float* d0, const float* u, const float* v, float dt)
 {
