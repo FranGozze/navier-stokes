@@ -266,25 +266,23 @@ Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
 
  Performance counter stats for './headless_gcc_-Ofast 512':
 
-   368,333,192,428      fp_ret_sse_avx_ops.all                                                
+   363,501,367,792      fp_ret_sse_avx_ops.all                                                
 
-     328.762273533 seconds time elapsed
+     194.670311006 seconds time elapsed
 
-     328.649863000 seconds user
-       0.003998000 seconds sys
-
+     194.598391000 seconds user
+       0.007997000 seconds sys
 
 Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
 
  Performance counter stats for './headless_clang_-Ofast 512':
 
-   363,501,394,862      fp_ret_sse_avx_ops.all                                                
+   363,501,367,792      fp_ret_sse_avx_ops.all                                                
 
-     273.261944689 seconds time elapsed
+     194.670311006 seconds time elapsed
 
-     273.168792000 seconds user
-       0.003998000 seconds sys
-
+     194.598391000 seconds user
+       0.007997000 seconds sys
 
 Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
 
