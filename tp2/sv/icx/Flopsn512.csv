@@ -1,7 +1,7 @@
-Linsolve w/ intrinsics and sndbnd default                 ,342026517933,77.592226000
- Linsolve w/ intrinsics and sndbnd mixed                   ,316722270939,73.265691000
- Linsolve w/ intrinsics and sndbnd intrinsics              ,316722270919,72.778545000
- Linsolve w/ intrinsics and sndbnd upgraded wo/ intrinsics ,316722270939,73.512877000
- Linsolve upgraded wo/ intrinsics (GROUP_SIZE 8)           ,363501360568,78.054941000
- Linsolve upgraded wo/ intrinsics (GROUP_SIZE 16)          ,363501360568,75.401793000
- Base (wo any upgrade -Ofast, -march=native)               ,363501367792,194.598391000
+Linsolve w/ intrinsics and sndbnd default,342026517933,77.592226000
+Linsolve w/ intrinsics and sndbnd mixed,316722270939,73.265691000
+Linsolve w/ intrinsics and sndbnd intrinsics,316722270919,72.778545000
+Linsolve w/ intrinsics and setbnd upgraded wo/ intrinsics,316722270939,73.512877000
+Linsolve upgraded wo/ intrinsics (GROUP_SIZE 8),363501360568,78.054941000
+Linsolve upgraded wo/ intrinsics (GROUP_SIZE 16),363501360568,75.401793000
+"Base (wo any upgrade -Ofast, -march=native on icx)",363501367792,194.598391000
