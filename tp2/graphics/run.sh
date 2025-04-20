@@ -1,7 +1,7 @@
 #! /bin/bash
 
-comps=("gcc")
-ns=("128" "256")
+comps=("gcc" "clang" "icx")
+ns=("512")
 
 for comp in "${comps[@]}"; do
     for n in "${ns[@]}"; do
