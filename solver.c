@@ -26,57 +26,12 @@ static void add_source(unsigned int n, float* x, const float* s, float dt)
 
 static void set_bnd(unsigned int n, boundary b, float* x)
 {
-    int vertical = b == VERTICAL, horizontal = b == HORIZONTAL;
-
-    float vmask = vertical ? -1.0f : 1.0f;
-    // __m256 vmask = _mm256_set1_ps(vertical ? -1.0f : 1.0f);
-    // float hmask = horizontal ? -1.0f : 1.0f;
-    __m256 hmask = _mm256_set1_ps(horizontal ? -1.0f : 1.0f);
-
-    for (unsigned int i = 1; i <= n - 7; i += 8) {
-
-        __m256 x_left = _mm256_loadu_ps(&x[IX(i, 1)]);
-        __m256 x_right = _mm256_loadu_ps(&x[IX(i, n)]);
-        // Store the modified values back to the array
-        _mm256_storeu_ps(&x[IX(i, 0)], _mm256_mul_ps(x_left, hmask));
-        _mm256_storeu_ps(&x[IX(i, n + 1)], _mm256_mul_ps(x_right, hmask));
-
-        // float aux_up[8] = { x[IX(1, i)], x[IX(1, i + 1)], x[IX(1, i + 2)], x[IX(1, i + 3)], x[IX(1, i + 4)], x[IX(1, i + 5)], x[IX(1, i + 6)], x[IX(1, i + 7)] };
-        // __m256 x_up = _mm256_loadu_ps(&aux_up[0]);
-        // float aux_down[8] = { x[IX(n, i)], x[IX(n, i + 1)], x[IX(n, i + 2)], x[IX(n, i + 3)], x[IX(n, i + 4)], x[IX(n, i + 5)], x[IX(n, i + 6)], x[IX(n, i + 7)] };
-        // __m256 x_down = _mm256_loadu_ps(&aux_down[0]);
-
-
-        // _mm256_storeu_ps(&aux_up[0], _mm256_mul_ps(x_up, vmask));
-        // _mm256_storeu_ps(&aux_down[0], _mm256_mul_ps(x_down, vmask));
-        float aux_up[GROUP_SIZE] = { vmask * x[IX(1, i)], vmask * x[IX(1, i + 1)], vmask * x[IX(1, i + 2)], vmask * x[IX(1, i + 3)], vmask * x[IX(1, i + 4)], vmask * x[IX(1, i + 5)], vmask * x[IX(1, i + 6)], vmask * x[IX(1, i + 7)] };
-
-        float aux_down[GROUP_SIZE] = { vmask * x[IX(n, i)], vmask * x[IX(n, i + 1)], vmask * x[IX(n, i + 2)], vmask * x[IX(n, i + 3)], vmask * x[IX(n, i + 4)], vmask * x[IX(n, i + 5)], vmask * x[IX(n, i + 6)], vmask * x[IX(n, i + 7)] };
-
-        for (int m = 0; m < GROUP_SIZE; m++) {
-            x[IX(0, i + m)] = aux_up[m];
-            x[IX(n + 1, i + m)] = aux_down[m];
-        }
+    for (unsigned int i = 1; i <= n; i++) {
+        x[IX(0, i)] = b == VERTICAL ? -x[IX(1, i)] : x[IX(1, i)];
+        x[IX(n + 1, i)] = b == VERTICAL ? -x[IX(n, i)] : x[IX(n, i)];
+        x[IX(i, 0)] = b == HORIZONTAL ? -x[IX(i, 1)] : x[IX(i, 1)];
+        x[IX(i, n + 1)] = b == HORIZONTAL ? -x[IX(i, n)] : x[IX(i, n)];
     }
-
-    // for (unsigned int i = 1; i <= n - (GROUP_SIZE - 1); i += GROUP_SIZE) {
-
-    //     float x_up[GROUP_SIZE] = { vmask * x[IX(1, i)], vmask * x[IX(1, i + 1)], vmask * x[IX(1, i + 2)], vmask * x[IX(1, i + 3)], vmask * x[IX(1, i + 4)], vmask * x[IX(1, i + 5)], vmask * x[IX(1, i + 6)], vmask * x[IX(1, i + 7)] };
-
-    //     float x_down[GROUP_SIZE] = { vmask * x[IX(n, i)], vmask * x[IX(n, i + 1)], vmask * x[IX(n, i + 2)], vmask * x[IX(n, i + 3)], vmask * x[IX(n, i + 4)], vmask * x[IX(n, i + 5)], vmask * x[IX(n, i + 6)], vmask * x[IX(n, i + 7)] };
-
-    //     // float x_left[GROUP_SIZE] = { hmask * x[IX(i, 1)], hmask * x[IX(i + 1, 1)], hmask * x[IX(i + 2, 1)], hmask * x[IX(i + 3, 1)], hmask * x[IX(i + 4, 1)], hmask * x[IX(i + 5, 1)], hmask * x[IX(i + 6, 1)], hmask * x[IX(i + 7, 1)] };
-
-    //     // float x_right[GROUP_SIZE] = { hmask * x[IX(i, n)], hmask * x[IX(i + 1, n)], hmask * x[IX(i + 2, n)], hmask * x[IX(i + 3, n)], hmask * x[IX(i + 4, n)], hmask * x[IX(i + 5, n)], hmask * x[IX(i + 6, n)], hmask * x[IX(i + 7, n)] };
-
-
-    //     for (int m = 0; m < GROUP_SIZE; m++) {
-    //         x[IX(0, i + m)] = x_up[m];
-    //         x[IX(n + 1, i + m)] = x_down[m];
-    //         // x[IX(i + m, 0)] = x_left[m];
-    //         // x[IX(i + m, n + 1)] = x_right[m];
-    //     }
-    // }
 
 
     x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
@@ -137,102 +92,6 @@ static void diffuse(unsigned int n, boundary b, float* x, const float* x0, float
     lin_solve(n, b, x, x0, a, 1 + 4 * a);
 }
 
-/*
-#include <immintrin.h>
-
-static void advect(unsigned int n, boundary b, float* d, const float* d0,
-                   const float* u, const float* v, float dt)
-{
-    const __m256 half = _mm256_set1_ps(0.5f);
-    const __m256 one = _mm256_set1_ps(1.0f);
-    const __m256 n_plus_half = _mm256_set1_ps(n + 0.5f);
-    const __m256 dt0_vec = _mm256_set1_ps(dt * n);
-
-    // Process elements in chunks of 8
-    for (unsigned int j = 1; j <= n; j++) {
-        for (unsigned int i = 1; i <= n; i += 8) {
-            // Determine how many elements to process (last iteration may have <8)
-            int remaining = n - i + 1;
-            int count = remaining < 8 ? remaining : 8;
-
-            // Load current positions and velocities
-            __m256i idx = _mm256_setr_epi32(i, i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7);
-            __m256i j_vec = _mm256_set1_epi32(j);
-
-            // Load u and v values (handle boundaries)
-            float u_vals[8], v_vals[8];
-            for (int k = 0; k < count; k++) {
-                u_vals[k] = u[IX(i + k, j)];
-                v_vals[k] = v[IX(i + k, j)];
-            }
-            // Pad with zeros if needed
-            for (int k = count; k < 8; k++) {
-                u_vals[k] = 0;
-                v_vals[k] = 0;
-            }
-
-            __m256 u_val = _mm256_loadu_ps(u_vals);
-            __m256 v_val = _mm256_loadu_ps(v_vals);
-
-            // Calculate backtraced positions
-            __m256 i_pos = _mm256_cvtepi32_ps(idx);
-            __m256 j_pos = _mm256_cvtepi32_ps(j_vec);
-
-            __m256 x = _mm256_sub_ps(i_pos, _mm256_mul_ps(dt0_vec, u_val));
-            __m256 y = _mm256_sub_ps(j_pos, _mm256_mul_ps(dt0_vec, v_val));
-
-            // Clamp positions to grid boundaries
-            x = _mm256_max_ps(x, half);
-            x = _mm256_min_ps(x, n_plus_half);
-            y = _mm256_max_ps(y, half);
-            y = _mm256_min_ps(y, n_plus_half);
-
-            // Calculate integer coordinates and weights
-            __m256 i0_ps = _mm256_floor_ps(x);
-            __m256 j0_ps = _mm256_floor_ps(y);
-            __m256 i1_ps = _mm256_add_ps(i0_ps, one);
-            __m256 j1_ps = _mm256_add_ps(j0_ps, one);
-
-            __m256 s1 = _mm256_sub_ps(x, i0_ps);
-            __m256 s0 = _mm256_sub_ps(one, s1);
-            __m256 t1 = _mm256_sub_ps(y, j0_ps);
-            __m256 t0 = _mm256_sub_ps(one, t1);
-
-            // Convert coordinates to integers
-            int i0_arr[8], j0_arr[8], i1_arr[8], j1_arr[8];
-            _mm256_storeu_si256((__m256i*)i0_arr, _mm256_cvttps_epi32(i0_ps));
-            _mm256_storeu_si256((__m256i*)j0_arr, _mm256_cvttps_epi32(j0_ps));
-            _mm256_storeu_si256((__m256i*)i1_arr, _mm256_cvttps_epi32(i1_ps));
-            _mm256_storeu_si256((__m256i*)j1_arr, _mm256_cvttps_epi32(j1_ps));
-
-            // Perform interpolation
-            float results[8] = { 0 };
-            for (int k = 0; k < count; k++) {
-                // Get surrounding values
-                float d00 = d0[IX(i0_arr[k], j0_arr[k])];
-                float d01 = d0[IX(i0_arr[k], j1_arr[k])];
-                float d10 = d0[IX(i1_arr[k], j0_arr[k])];
-                float d11 = d0[IX(i1_arr[k], j1_arr[k])];
-
-                // Extract weights for this element
-                float s0_k = ((float*)&s0)[k];
-                float s1_k = ((float*)&s1)[k];
-                float t0_k = ((float*)&t0)[k];
-                float t1_k = ((float*)&t1)[k];
-
-                // Bilinear interpolation
-                results[k] = s0_k * (t0_k * d00 + t1_k * d01) + s1_k * (t0_k * d10 + t1_k * d11);
-            }
-
-            // Store results
-            for (int k = 0; k < count; k++) {
-                d[IX(i + k, j)] = results[k];
-            }
-        }
-    }
-    set_bnd(n, b, d);
-}
-*/
 static void advect(unsigned int n, boundary b, float* d, const float* d0, const float* u, const float* v, float dt)
 {
     int i0, i1, j0, j1;
