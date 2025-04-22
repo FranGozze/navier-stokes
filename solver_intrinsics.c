@@ -1,3 +1,5 @@
+#include <immintrin.h> // For AVX intrinsics
+
 #include <stddef.h>
 
 #include "solver.h"
