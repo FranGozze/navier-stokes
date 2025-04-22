@@ -1,11 +1,9 @@
 Linsolve w/ intrinsics and sndbnd default,368333194562,73.169459000
 Linsolve w/ intrinsics and sndbnd mixed,338197109358,69.285100000
 Linsolve w/ intrinsics and sndbnd intrinsics,338197109358,69.017915000
-Linsolve w/ intrinsics and setbnd upgraded wo/ intrinsics,338197109358,68.822726000
-Linsolve upgraded wo/ intrinsics (GROUP_SIZE 8),368333194580,74.225597000
-Linsolve upgraded wo/ intrinsics (GROUP_SIZE 16),368333194580,74.835898000
+Linsolve w/ intrinsics and setbnd Autovectorized,338197109358,68.822726000
+Linsolve Autovectorized 1 (GROUP_SIZE 8),368333194580,74.225597000
+Linsolve Autovectorized 1 (GROUP_SIZE 16),368333194580,74.835898000
 "Linsolve and advect w/ intrisics, setbnd  mixed",368798755514,77.221299000
 "Base (wo any upgrade -Ofast, -march=native on icx)",363501367792,194.598391000
-solver_vector1,368333194580,73.823716000
-solver_vector2,368333194724,90.423134000
-solver_intrinsics,368333194571,73.473538000
+Linsolve Autovectorized 2 (GROUP_SIZE 8),368333194724,90.423134000
