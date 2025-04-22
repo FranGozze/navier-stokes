@@ -1,0 +1,137 @@
+Using compiler: gcc
+Compiling solver_vector1.c with gcc...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2_solver_vector1 512':
+
+   368,333,194,580      fp_ret_sse_avx_ops.all
+
+      73.860341920 seconds time elapsed
+
+      73.823716000 seconds user
+       0.011996000 seconds sys
+
+
+Done compiling solver_vector1.c with gcc
+------------------------
+Compiling solver_vector2.c with gcc...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2_solver_vector2 512':
+
+   368,333,194,724      fp_ret_sse_avx_ops.all
+
+      90.454233942 seconds time elapsed
+
+      90.423134000 seconds user
+       0.003998000 seconds sys
+
+
+Done compiling solver_vector2.c with gcc
+------------------------
+Compiling solver_intrinsics.c with gcc...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_gcc_-O2_solver_intrinsics 512':
+
+   368,333,194,571      fp_ret_sse_avx_ops.all
+
+      73.512300401 seconds time elapsed
+
+      73.473538000 seconds user
+       0.011995000 seconds sys
+
+
+Done compiling solver_intrinsics.c with gcc
+------------------------
+Using compiler: clang
+Compiling solver_vector1.c with clang...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2_solver_vector1 512':
+
+   363,501,393,011      fp_ret_sse_avx_ops.all
+
+      49.501228353 seconds time elapsed
+
+      49.474276000 seconds user
+       0.003998000 seconds sys
+
+
+Done compiling solver_vector1.c with clang
+------------------------
+Compiling solver_vector2.c with clang...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2_solver_vector2 512':
+
+   363,501,393,011      fp_ret_sse_avx_ops.all
+
+      49.412002810 seconds time elapsed
+
+      49.383084000 seconds user
+       0.007996000 seconds sys
+
+
+Done compiling solver_vector2.c with clang
+------------------------
+Compiling solver_intrinsics.c with clang...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_clang_-O2_solver_intrinsics 512':
+
+   342,026,550,663      fp_ret_sse_avx_ops.all
+
+      76.699685566 seconds time elapsed
+
+      76.672710000 seconds user
+       0.003998000 seconds sys
+
+
+Done compiling solver_intrinsics.c with clang
+------------------------
+Using compiler: icx
+Compiling solver_vector1.c with icx...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2_solver_vector1 512':
+
+   363,501,360,568      fp_ret_sse_avx_ops.all
+
+      77.847081672 seconds time elapsed
+
+      77.819004000 seconds user
+       0.003999000 seconds sys
+
+
+Done compiling solver_vector1.c with icx
+------------------------
+Compiling solver_vector2.c with icx...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2_solver_vector2 512':
+
+   363,501,360,448      fp_ret_sse_avx_ops.all
+
+      64.340812574 seconds time elapsed
+
+      64.316168000 seconds user
+       0.003998000 seconds sys
+
+
+Done compiling solver_vector2.c with icx
+------------------------
+Compiling solver_intrinsics.c with icx...
+Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
+
+ Performance counter stats for './headless_icx_-O2_solver_intrinsics 512':
+
+   342,026,517,933      fp_ret_sse_avx_ops.all
+
+      77.738833910 seconds time elapsed
+
+      77.720326000 seconds user
+       0.003999000 seconds sys
+
+
+Done compiling solver_intrinsics.c with icx
