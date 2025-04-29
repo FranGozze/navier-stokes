@@ -1,9 +1,9 @@
 #include <stddef.h>
 
+#include "indices.h"
 #include "solver.h"
 
-#define GROUP_SIZE 8
-#define IX(i, j) ((i) + (n + 2) * (j))
+#define IX(x, y) (rb_idx((x), (y), (n + 2)))
 #define SWAP(x0, x)      \
     {                    \
         float* tmp = x0; \
@@ -14,6 +14,8 @@
 typedef enum { NONE = 0,
                VERTICAL = 1,
                HORIZONTAL = 2 } boundary;
+typedef enum { RED,
+               BLACK } grid_color;
 
 static void add_source(unsigned int n, float* x, const float* s, float dt)
 {
@@ -31,45 +33,47 @@ static void set_bnd(unsigned int n, boundary b, float* x)
         x[IX(i, 0)] = b == HORIZONTAL ? -x[IX(i, 1)] : x[IX(i, 1)];
         x[IX(i, n + 1)] = b == HORIZONTAL ? -x[IX(i, n)] : x[IX(i, n)];
     }
-
-    // posible vectorization
     x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
     x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
     x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
     x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
 }
 
-
-static void lin_solve(unsigned int n, boundary b, float* x, const float* x0, float a, float c)
+static void lin_solve_rb_step(grid_color color,
+                              unsigned int n,
+                              float a,
+                              float c,
+                              const float* restrict same0,
+                              const float* restrict neigh,
+                              float* restrict same)
 {
-    for (unsigned int k = 0; k < 20; k++) {
-        for (unsigned int j = 1; j <= n; j++) {
-            unsigned int i = 1;
-            for (; i <= n - (GROUP_SIZE - 1); i += GROUP_SIZE) {
-                float x_up[GROUP_SIZE] = {x[IX(i, j-1)], x[IX(i+1, j-1)], x[IX(i+2, j-1)], x[IX(i+3, j-1)],x[IX(i+4, j-1)], x[IX(i+5, j-1)], x[IX(i+6, j-1)], x[IX(i+7, j-1)]};
-                float x_left[GROUP_SIZE] = {x[IX(i-1, j)], x[IX(i, j)], x[IX(i+1, j)], x[IX(i+2, j)],x[IX(i+3, j)], x[IX(i+4, j)], x[IX(i+5, j)], x[IX(i+6, j)]};
-                float x_right[GROUP_SIZE] = {x[IX(i+1, j)], x[IX(i+2, j)], x[IX(i+3, j)], x[IX(i+4, j)],x[IX(i+5, j)], x[IX(i+6, j)], x[IX(i+7, j)], x[IX(i+8, j)]};
-                float x_down[GROUP_SIZE] = {x[IX(i, j+1)], x[IX(i+1, j+1)], x[IX(i+2, j+1)], x[IX(i+3, j+1)],x[IX(i+4, j+1)], x[IX(i+5, j+1)], x[IX(i+6, j+1)], x[IX(i+7, j+1)]};
-                
-                float x0_vals[GROUP_SIZE] = {x0[IX(i, j)], x0[IX(i+1, j)], x0[IX(i+2, j)], x0[IX(i+3, j)],x0[IX(i+4, j)], x0[IX(i+5, j)], x0[IX(i+6, j)], x0[IX(i+7, j)]};
-                
-                for (int m = 0; m < GROUP_SIZE; m++) {
-                    x[IX(i+m, j)] = (x0_vals[m] + a * (x_left[m] + x_right[m] + x_up[m] + x_down[m])) / c;
-                }
-                // float temp[GROUP_SIZE];
-                // for (int m = 0; m < GROUP_SIZE; m++) {
-                //     temp[m] = (x0_vals[m] + a * (x_left[m] + x_right[m] + x_up[m] + x_down[m])) / c;
-                // }
-                // for (int m = 0; m < GROUP_SIZE; m++) {
-                //     x[IX(i+m, j)] = temp[m];
-                // }
-            }
-            
-            for (; i <= n; i++) {
-                x[IX(i, j)] = (x0[IX(i, j)] + a * (x[IX(i-1, j)] + x[IX(i+1, j)] + 
-                                                  x[IX(i, j-1)] + x[IX(i, j+1)])) / c;
-            }
+    int shift = color == RED ? 1 : -1;
+    unsigned int start = color == RED ? 0 : 1;
+
+    unsigned int width = (n + 2) / 2;
+
+    for (unsigned int y = 1; y <= n; ++y, shift = -shift, start = 1 - start) {
+        for (unsigned int x = start; x < width - (1 - start); ++x) {
+            int index = idx(x, y, width);
+            same[index] = (same0[index] + a * (neigh[index - width] + neigh[index] + neigh[index + shift] + neigh[index + width])) / c;
         }
+    }
+}
+
+static void lin_solve(unsigned int n, boundary b,
+                      float* restrict x,
+                      const float* restrict x0,
+                      float a, float c)
+{
+    unsigned int color_size = (n + 2) * ((n + 2) / 2);
+    const float* red0 = x0;
+    const float* blk0 = x0 + color_size;
+    float* red = x;
+    float* blk = x + color_size;
+
+    for (unsigned int k = 0; k < 20; ++k) {
+        lin_solve_rb_step(RED, n, a, c, red0, blk, red);
+        lin_solve_rb_step(BLACK, n, a, c, blk0, red, blk);
         set_bnd(n, b, x);
     }
 }
@@ -86,8 +90,8 @@ static void advect(unsigned int n, boundary b, float* d, const float* d0, const 
     float x, y, s0, t0, s1, t1;
 
     float dt0 = dt * n;
-    for (unsigned int j = 1; j <= n; j++) {
-        for (unsigned int i = 1; i <= n; i++) {
+    for (unsigned int i = 1; i <= n; i++) {
+        for (unsigned int j = 1; j <= n; j++) {
             x = i - dt0 * u[IX(i, j)];
             y = j - dt0 * v[IX(i, j)];
             if (x < 0.5f) {
@@ -116,11 +120,9 @@ static void advect(unsigned int n, boundary b, float* d, const float* d0, const 
 
 static void project(unsigned int n, float* u, float* v, float* p, float* div)
 {
-    float constant = -0.5f / n;
-    for (unsigned int j = 1; j <= n; j++) {
-        for (unsigned int i = 1; i <= n; i++) {
-            // possible vectorization
-            div[IX(i, j)] = constant * (u[IX(i + 1, j)] - u[IX(i - 1, j)] + v[IX(i, j + 1)] - v[IX(i, j - 1)]);
+    for (unsigned int i = 1; i <= n; i++) {
+        for (unsigned int j = 1; j <= n; j++) {
+            div[IX(i, j)] = -0.5f * (u[IX(i + 1, j)] - u[IX(i - 1, j)] + v[IX(i, j + 1)] - v[IX(i, j - 1)]) / n;
             p[IX(i, j)] = 0;
         }
     }
@@ -128,12 +130,11 @@ static void project(unsigned int n, float* u, float* v, float* p, float* div)
     set_bnd(n, NONE, p);
 
     lin_solve(n, NONE, p, div, 1, 4);
-    float constant2 = 0.5f * n;
-    for (unsigned int j = 1; j <= n; j++) {
-        for (unsigned int i = 1; i <= n; i++) {
-            // possible vectorization
-            u[IX(i, j)] -= constant2 * (p[IX(i + 1, j)] - p[IX(i - 1, j)]);
-            v[IX(i, j)] -= constant2 * (p[IX(i, j + 1)] - p[IX(i, j - 1)]);
+
+    for (unsigned int i = 1; i <= n; i++) {
+        for (unsigned int j = 1; j <= n; j++) {
+            u[IX(i, j)] -= 0.5f * n * (p[IX(i + 1, j)] - p[IX(i - 1, j)]);
+            v[IX(i, j)] -= 0.5f * n * (p[IX(i, j + 1)] - p[IX(i, j - 1)]);
         }
     }
     set_bnd(n, VERTICAL, u);

@@ -18,12 +18,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "indices.h"
 #include "solver.h"
-#include "wtime.h"
+#include "timing.h"
 
 /* macros */
 
-#define IX(i, j) ((i) + (N + 2) * (j))
+#define IX(x, y) (rb_idx((x), (y), (N + 2)))
 
 /* global variables */
 
@@ -50,24 +51,18 @@ static int omx, omy, mx, my;
 
 static void free_data(void)
 {
-    if (u) {
+    if (u)
         free(u);
-    }
-    if (v) {
+    if (v)
         free(v);
-    }
-    if (u_prev) {
+    if (u_prev)
         free(u_prev);
-    }
-    if (v_prev) {
+    if (v_prev)
         free(v_prev);
-    }
-    if (dens) {
+    if (dens)
         free(dens);
-    }
-    if (dens_prev) {
+    if (dens_prev)
         free(dens_prev);
-    }
 }
 
 static void clear_data(void)
@@ -213,16 +208,14 @@ static void react(float* d, float* u, float* v)
         d[IX(N / 2, N / 2)] = source * 10.0f;
     }
 
-    if (!mouse_down[0] && !mouse_down[2]) {
+    if (!mouse_down[0] && !mouse_down[2])
         return;
-    }
 
     i = (int)((mx / (float)win_x) * N + 1);
     j = (int)(((win_y - my) / (float)win_y) * N + 1);
 
-    if (i < 1 || i > N || j < 1 || j > N) {
+    if (i < 1 || i > N || j < 1 || j > N)
         return;
-    }
 
     if (mouse_down[0]) {
         u[IX(i, j)] = force * (mx - omx);
@@ -331,11 +324,10 @@ static void display_func(void)
 {
     pre_display();
 
-    if (dvel) {
+    if (dvel)
         draw_velocity();
-    } else {
+    else
         draw_density();
-    }
 
     post_display();
 }
@@ -421,9 +413,8 @@ int main(int argc, char** argv)
 
     dvel = 0;
 
-    if (!allocate_data()) {
+    if (!allocate_data())
         exit(1);
-    }
     clear_data();
 
     win_x = 512;
