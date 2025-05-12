@@ -4,7 +4,7 @@
 solvers=(solver.c solver_rb_pragma.c solver_rb_intrinsics.c solver_rb_intrinsics_pragma.c)
 
 # Array of compilers
-compilers=(gcc)
+compilers=(gcc clang icx)
 
 # Compile flags
 FLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native -funsafe-math-optimizations -ftree-vectorize -ffast-math -O2 -fopenmp"
