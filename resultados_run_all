@@ -1,137 +1,74 @@
 Using compiler: gcc
-Compiling solver_vector1.c with gcc...
+Compiling solver_rb_pragma-4.c with gcc...
 Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
 
- Performance counter stats for './headless_gcc_-O2_solver_vector1 512':
+ Performance counter stats for './headless_gcc_-O2_solver_rb_pragma 512':
 
-   368,333,194,580      fp_ret_sse_avx_ops.all
+   368,334,863,310      fp_ret_sse_avx_ops.all
 
-      73.860341920 seconds time elapsed
+      28.360988382 seconds time elapsed
 
-      73.823716000 seconds user
-       0.011996000 seconds sys
+     113.130167000 seconds user
+       0.279955000 seconds sys
 
 
-Done compiling solver_vector1.c with gcc
+Done compiling solver_rb_pragma-4.c with gcc
 ------------------------
-Compiling solver_vector2.c with gcc...
+Compiling solver_rb_intrinsics_pragma-4.c with gcc...
 Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
 
- Performance counter stats for './headless_gcc_-O2_solver_vector2 512':
+ Performance counter stats for './headless_gcc_-O2_solver_rb_intrinsics_pragma 512':
 
-   368,333,194,724      fp_ret_sse_avx_ops.all
+   368,385,612,859      fp_ret_sse_avx_ops.all
 
-      90.454233942 seconds time elapsed
+      44.038890248 seconds time elapsed
 
-      90.423134000 seconds user
-       0.003998000 seconds sys
+     159.506055000 seconds user
+       0.311441000 seconds sys
 
 
-Done compiling solver_vector2.c with gcc
+Done compiling solver_rb_intrinsics_pragma-4.c with gcc
 ------------------------
-Compiling solver_intrinsics.c with gcc...
-Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
-
- Performance counter stats for './headless_gcc_-O2_solver_intrinsics 512':
-
-   368,333,194,571      fp_ret_sse_avx_ops.all
-
-      73.512300401 seconds time elapsed
-
-      73.473538000 seconds user
-       0.011995000 seconds sys
-
-
-Done compiling solver_intrinsics.c with gcc
-------------------------
-Using compiler: clang
-Compiling solver_vector1.c with clang...
-Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
-
- Performance counter stats for './headless_clang_-O2_solver_vector1 512':
-
-   363,501,393,011      fp_ret_sse_avx_ops.all
-
-      49.501228353 seconds time elapsed
-
-      49.474276000 seconds user
-       0.003998000 seconds sys
-
-
-Done compiling solver_vector1.c with clang
-------------------------
-Compiling solver_vector2.c with clang...
-Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
-
- Performance counter stats for './headless_clang_-O2_solver_vector2 512':
-
-   363,501,393,011      fp_ret_sse_avx_ops.all
-
-      49.412002810 seconds time elapsed
-
-      49.383084000 seconds user
-       0.007996000 seconds sys
-
-
-Done compiling solver_vector2.c with clang
-------------------------
-Compiling solver_intrinsics.c with clang...
-Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
-
- Performance counter stats for './headless_clang_-O2_solver_intrinsics 512':
-
-   342,026,550,663      fp_ret_sse_avx_ops.all
-
-      76.699685566 seconds time elapsed
-
-      76.672710000 seconds user
-       0.003998000 seconds sys
-
-
-Done compiling solver_intrinsics.c with clang
-------------------------
+gcc -MM  >.depend
+gcc: fatal error: no input files
+compilation terminated.
+rm -f  *.o .depend *~ headless_* output*.txt demo
+Finished with gcc
+========================
 Using compiler: icx
-Compiling solver_vector1.c with icx...
+Compiling solver_rb_pragma-4.c with icx...
 Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
 
- Performance counter stats for './headless_icx_-O2_solver_vector1 512':
+ Performance counter stats for './headless_icx_-O2_solver_rb_pragma 512':
 
-   363,501,360,568      fp_ret_sse_avx_ops.all
+   363,501,403,124      fp_ret_sse_avx_ops.all
 
-      77.847081672 seconds time elapsed
+      29.194019479 seconds time elapsed
 
-      77.819004000 seconds user
-       0.003999000 seconds sys
+     116.410056000 seconds user
+       0.300005000 seconds sys
 
 
-Done compiling solver_vector1.c with icx
+Done compiling solver_rb_pragma-4.c with icx
 ------------------------
-Compiling solver_vector2.c with icx...
+Compiling solver_rb_intrinsics_pragma-4.c with icx...
 Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
 
- Performance counter stats for './headless_icx_-O2_solver_vector2 512':
+ Performance counter stats for './headless_icx_-O2_solver_rb_intrinsics_pragma 512':
 
-   363,501,360,448      fp_ret_sse_avx_ops.all
+   369,943,800,938      fp_ret_sse_avx_ops.all
 
-      64.340812574 seconds time elapsed
+      41.176474302 seconds time elapsed
 
-      64.316168000 seconds user
-       0.003998000 seconds sys
+     159.038434000 seconds user
+       5.499254000 seconds sys
 
 
-Done compiling solver_vector2.c with icx
+Done compiling solver_rb_intrinsics_pragma-4.c with icx
 ------------------------
-Compiling solver_intrinsics.c with icx...
-Using defaults : N=512 dt=0.1 diff=0 visc=0 force = 5 source=100
-
- Performance counter stats for './headless_icx_-O2_solver_intrinsics 512':
-
-   342,026,517,933      fp_ret_sse_avx_ops.all
-
-      77.738833910 seconds time elapsed
-
-      77.720326000 seconds user
-       0.003999000 seconds sys
-
-
-Done compiling solver_intrinsics.c with icx
+gcc -MM  >.depend
+gcc: fatal error: no input files
+compilation terminated.
+rm -f  *.o .depend *~ headless_* output*.txt demo
+Finished with icx
+========================
