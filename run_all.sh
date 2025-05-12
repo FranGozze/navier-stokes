@@ -27,7 +27,7 @@ for compiler in "${compilers[@]}"; do
         # Link everything together
         $compiler $FLAGS headless_${compiler}_-O2.o "${base}_${compiler}_-O2.o" wtime_${compiler}_-O2.o -o "headless_${compiler}_-O2_${base}"
         
-        perf stat -e fp_ret_sse_avx_ops.all ./headless_${compiler}_-O2_${base} 512 > tp2/sv/${compiler}/${base}.csv
+        perf stat -e fp_ret_sse_avx_ops.all ./headless_${compiler}_-O2_${base} 512 > tp3/sv/${compiler}/${base}.csv
 
         # time ./headless_${compiler}_-O2_${base} 512 > tp2/sv/${compiler}/${base}.csv
 
