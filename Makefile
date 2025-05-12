@@ -11,7 +11,7 @@ VALUES=128
 CC=gcc
 
 # Flags por defecto
-CFLAGS=-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native -funsafe-math-optimizations -fopt-info -ftree-vectorize
+CFLAGS=-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native -funsafe-math-optimizations -fopt-info -ftree-vectorize -fopenmp
 LDFLAGS=
 
 # Sufijo para el nombre del ejecutable
