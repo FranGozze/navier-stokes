@@ -54,7 +54,7 @@ run: all
 	$(foreach compiler,$(COMPILERS),\
 		$(foreach flags,$(EXTRA_FLAGS),\
 			$(foreach value,$(VALUES),\
-				perf stat -e fp_ret_sse_avx_ops.all ./headless_$(compiler)_$(flags) $(value) \
+				perf stat -e fp_ret_sse_avx_ops.all -e cycles -e cpu-clock -e task-clock -- ./headless_$(compiler)_$(flags) $(value) \
 					 > tp2/sv/$(compiler)/n$(value)$(flags)$(SUFFIXX).csv;)))
 
 demo.o: demo.c
