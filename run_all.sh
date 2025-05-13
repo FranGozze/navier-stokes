@@ -6,6 +6,7 @@ solvers=(solver_rb_pragma.c  solver_rb_intrinsics_pragma.c)
 # Array of compilers
 compilers=(gcc clang icx)
 
+NUM_THREADS=(4 8 16 32)
 # Compile flags
 FLAGS="-std=c11 -Wall -Wextra -Wno-unused-parameter -march=native -funsafe-math-optimizations -ftree-vectorize -ffast-math -O2 -fopenmp"
 
@@ -27,7 +28,11 @@ for compiler in "${compilers[@]}"; do
         # Link everything together
         $compiler $FLAGS headless_${compiler}_-O2.o "${base}_${compiler}_-O2.o" wtime_${compiler}_-O2.o -o "headless_${compiler}_-O2_${base}"
         
-        perf stat -e fp_ret_sse_avx_ops.all -e cycles -e cpu-clock -e task-clock -- ./headless_${compiler}_-O2_${base} 512 > tp3/sv/${compiler}/${base}.csv
+        for threads in "${NUM_THREADS[@]}"; do
+            echo "Running with $threads threads..."
+            OMP_NUM_THREADS=$threads perf stat -e fp_ret_sse_avx_ops.all  -e task-clock  ./headless_${compiler}_-O2_${base} 512 > tp3/sv/${compiler}/${base}_${threads}.csv
+        done
+        # perf stat -e fp_ret_sse_avx_ops.all  -e task-clock  ./headless_${compiler}_-O2_${base} 512 > tp3/sv/${compiler}/${base}.csv
 
         # time ./headless_${compiler}_-O2_${base} 512 > tp2/sv/${compiler}/${base}.csv
 
