@@ -13,7 +13,6 @@
         x0 = x;          \
         x = tmp;         \
     }
-
 typedef enum { NONE = 0,
                VERTICAL = 1,
                HORIZONTAL = 2 } boundary;
@@ -40,13 +39,13 @@ static void set_bnd(unsigned int n, boundary b, float* x)
     }
 #pragma omp single
     {
-        // Set corners
         x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
         x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
         x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
         x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
     }
 }
+
 
 static void lin_solve_rb_step(grid_color color,
                               unsigned int n,
@@ -108,38 +107,32 @@ static void diffuse(unsigned int n, boundary b, float* x, const float* x0, float
     float a = dt * diff * n * n;
     lin_solve(n, b, x, x0, a, 1 + 4 * a);
 }
-
 static void advect(unsigned int n, boundary b, float* d, const float* d0, const float* u, const float* v, float dt)
 {
-    int i0, i1, j0, j1;
-    float x, y, s0, t0, s1, t1;
-
     float dt0 = dt * n;
 #pragma omp parallel for collapse(2) schedule(static)
     for (unsigned int i = 1; i <= n; i++) {
         for (unsigned int j = 1; j <= n; j++) {
-            x = i - dt0 * u[IX(i, j)];
-            y = j - dt0 * v[IX(i, j)];
-            // x = fmin(fmax(x, 0.5f), n + 0.5f);
+            float x = i - dt0 * u[IX(i, j)];
+            float y = j - dt0 * v[IX(i, j)];
             if (x < 0.5f) {
                 x = 0.5f;
             } else if (x > n + 0.5f) {
                 x = n + 0.5f;
             }
-            i0 = (int)x;
-            i1 = i0 + 1;
-            // y = fmin(fmax(y, 0.5f), n + 0.5f);
+            int i0 = (int)x;
+            int i1 = i0 + 1;
             if (y < 0.5f) {
                 y = 0.5f;
             } else if (y > n + 0.5f) {
                 y = n + 0.5f;
             }
-            j0 = (int)y;
-            j1 = j0 + 1;
-            s1 = x - i0;
-            s0 = 1 - s1;
-            t1 = y - j0;
-            t0 = 1 - t1;
+            int j0 = (int)y;
+            int j1 = j0 + 1;
+            float s1 = x - i0;
+            float s0 = 1 - s1;
+            float t1 = y - j0;
+            float t0 = 1 - t1;
             d[IX(i, j)] = s0 * (t0 * d0[IX(i0, j0)] + t1 * d0[IX(i0, j1)]) + s1 * (t0 * d0[IX(i1, j0)] + t1 * d0[IX(i1, j1)]);
         }
     }
@@ -159,6 +152,7 @@ static void project(unsigned int n, float* u, float* v, float* p, float* div)
     set_bnd(n, NONE, p);
 
     lin_solve(n, NONE, p, div, 1, 4);
+
 #pragma omp parallel for collapse(2) schedule(static)
     for (unsigned int i = 1; i <= n; i++) {
         for (unsigned int j = 1; j <= n; j++) {
