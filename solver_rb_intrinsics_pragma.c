@@ -23,6 +23,7 @@ typedef enum { RED,
 static void add_source(unsigned int n, float* x, const float* s, float dt)
 {
     unsigned int size = (n + 2) * (n + 2);
+#pragma omp parallel for schedule(static)
     for (unsigned int i = 0; i < size; i++) {
         x[i] += dt * s[i];
     }
@@ -30,16 +31,21 @@ static void add_source(unsigned int n, float* x, const float* s, float dt)
 
 static void set_bnd(unsigned int n, boundary b, float* x)
 {
+#pragma omp parallel for schedule(static)
     for (unsigned int i = 1; i <= n; i++) {
         x[IX(0, i)] = b == VERTICAL ? -x[IX(1, i)] : x[IX(1, i)];
         x[IX(n + 1, i)] = b == VERTICAL ? -x[IX(n, i)] : x[IX(n, i)];
         x[IX(i, 0)] = b == HORIZONTAL ? -x[IX(i, 1)] : x[IX(i, 1)];
         x[IX(i, n + 1)] = b == HORIZONTAL ? -x[IX(i, n)] : x[IX(i, n)];
     }
-    x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
-    x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
-    x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
-    x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
+#pragma omp single
+    {
+        // Set corners
+        x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
+        x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
+        x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
+        x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
+    }
 }
 
 static void lin_solve_rb_step(grid_color color,
@@ -56,13 +62,14 @@ static void lin_solve_rb_step(grid_color color,
     unsigned int width = (n + 2) / 2;
     __m256 a_vec = _mm256_set1_ps(a);
     __m256 c_vec = _mm256_set1_ps(c);
-    
-    #pragma omp parallel for
+
+#pragma omp parallel for
     for (unsigned int y = 1; y <= n; ++y) {
         int local_shift = (y % 2 == 0) ? -shift : shift;
         unsigned int local_start = (y % 2 == 0) ? 1 - start : start;
-        
+
         for (unsigned int x = local_start; x < width - (1 - local_start); x += 8) {
+            // x + y * width
             int index = idx(x, y, width);
             __m256 x_up = _mm256_loadu_ps(&neigh[index - width]);
             __m256 x_left = _mm256_loadu_ps(&neigh[index]);
@@ -108,6 +115,7 @@ static void advect(unsigned int n, boundary b, float* d, const float* d0, const 
     float x, y, s0, t0, s1, t1;
 
     float dt0 = dt * n;
+#pragma omp parallel for collapse(2) schedule(static)
     for (unsigned int i = 1; i <= n; i++) {
         for (unsigned int j = 1; j <= n; j++) {
             x = i - dt0 * u[IX(i, j)];
@@ -140,6 +148,7 @@ static void advect(unsigned int n, boundary b, float* d, const float* d0, const 
 
 static void project(unsigned int n, float* u, float* v, float* p, float* div)
 {
+#pragma omp parallel for collapse(2) schedule(static)
     for (unsigned int i = 1; i <= n; i++) {
         for (unsigned int j = 1; j <= n; j++) {
             div[IX(i, j)] = -0.5f * (u[IX(i + 1, j)] - u[IX(i - 1, j)] + v[IX(i, j + 1)] - v[IX(i, j - 1)]) / n;
@@ -150,7 +159,7 @@ static void project(unsigned int n, float* u, float* v, float* p, float* div)
     set_bnd(n, NONE, p);
 
     lin_solve(n, NONE, p, div, 1, 4);
-
+#pragma omp parallel for collapse(2) schedule(static)
     for (unsigned int i = 1; i <= n; i++) {
         for (unsigned int j = 1; j <= n; j++) {
             u[IX(i, j)] -= 0.5f * n * (p[IX(i + 1, j)] - p[IX(i - 1, j)]);
