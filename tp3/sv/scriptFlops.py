@@ -64,6 +64,11 @@ def parse_file(filename):
                     if not time_match:
                         continue
                     elapsed_time = time_match.group(1)
+
+                    cpu_utilized_match = re.search(r'(\d+\.\d+)\s+CPUs utilized', run_content)
+                    if not cpu_utilized_match:
+                        continue
+                    cpu_utilized = cpu_utilized_match.group(1)
                     
                     # Store data
                     if current_compiler and current_solver:
@@ -71,6 +76,7 @@ def parse_file(filename):
                             'solver': solver_name,
                             'fp_ops': fp_ops,
                             'time': elapsed_time,
+                            'cpu_utilized': cpu_utilized
                         })
                     
                 except Exception as e:
@@ -85,7 +91,6 @@ def write_csv_files(data):
     for compiler, n_data in data.items():
         # Crear directorio si no existe
         os.makedirs(compiler, exist_ok=True)
-        
         for N, entries in n_data.items():
             output_path = os.path.join(compiler, f'Flopsn{N}.csv')
             
@@ -96,7 +101,8 @@ def write_csv_files(data):
                 # writer.writerow(['solver', 'fp_ops', 'user_time'])
                 
                 for entry in entries:
-                    writer.writerow([entry['solver'], entry['fp_ops'], entry['time']])
+                    flops = float(entry['fp_ops']) / float(entry['time']) / 1e9
+                    writer.writerow([entry['solver'], entry['fp_ops'], entry['time'], entry['cpu_utilized'], flops])
             
             print(f"Archivo creado/actualizado: {output_path}")
 def main():
