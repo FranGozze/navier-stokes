@@ -62,7 +62,7 @@ static void lin_solve_rb_step(grid_color color,
     __m256 a_vec = _mm256_set1_ps(a);
     __m256 c_vec = _mm256_set1_ps(c);
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
     for (unsigned int y = 1; y <= n; ++y) {
         int local_shift = (y % 2 == 0) ? -shift : shift;
         unsigned int local_start = (y % 2 == 0) ? 1 - start : start;
