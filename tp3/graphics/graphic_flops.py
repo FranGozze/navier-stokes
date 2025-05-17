@@ -32,8 +32,21 @@ for label in set().union(*[set(df[0].str.strip()) for df in data.values()]):
 # Sort labels by their maximum values
 labels = sorted(opt_max_values.keys(), key=lambda x: opt_max_values[x], reverse=True)
 
+# Calculate min_flops before creating the plot
+all_values = []
+for df in data.values():
+    all_values.extend(df['result'].values)
+max_flops = max(all_values)
+min_flops = min(all_values)
+max_speedup = max_flops / min_flops
+
+# Calculate appropriate figure height
+base_height = 6
+label_space = max_flops * 0.15  # Increased space for labels
+total_height = base_height + (label_space / max_flops) * base_height
+
 # Create the plot
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(12, total_height))
 
 # Set width of bars and positions of the bars
 barWidth = 0.25
@@ -51,12 +64,23 @@ for i, (compiler, df) in enumerate(data.items()):
         else:
             value = 0
         values.append(value)
-    plt.bar(positions, values, width=barWidth, label=compiler)
+    bars = plt.bar(positions, values, width=barWidth, label=compiler)
+    
+    # Add speedup text above each bar
+    for bar, value in zip(bars, values):
+        if value > 0:  # Only show speedup for non-zero values
+            speedup = value / min_flops
+            plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + max_flops * 0.02,
+                    f'{speedup:.2f}x',
+                    ha='center', va='bottom', rotation=90)
 
 # Add labels and title
 plt.xlabel('Optimización')
 plt.ylabel('FLOPS')
 plt.title(f"FLOPS por optimización y compilador, tamaño {size} (ordenado por máximo FLOPS)")
+
+# Set y-axis limits to include space for labels
+plt.ylim(0, max_flops * 1.2)  # Add 20% more space at the top
 
 # Add xticks on the middle of the group bars
 plt.xticks([r + barWidth for r in range(len(labels))], labels, rotation=45, ha='right')
@@ -64,18 +88,11 @@ plt.xticks([r + barWidth for r in range(len(labels))], labels, rotation=45, ha='
 # Add legend
 plt.legend()
 
-# Adjust layout
-plt.tight_layout()
+# Adjust layout with more padding at the top
+plt.tight_layout(pad=2.0)
 
-# Calculate and display the speedup ratio
-all_values = []
-for df in data.values():
-    all_values.extend(df['result'].values)
-max_flops = max(all_values)
-min_flops = min(all_values)
-speedup = max_flops / min_flops
-
-plt.text(0.02, 0.98, f'{speedup:.2f}x', 
+# Display the highest speedup ratio in the corner
+plt.text(0.02, 0.98, f'{max_speedup:.2f}x', 
          transform=plt.gca().transAxes,
          verticalalignment='top',
          bbox=dict(facecolor='white', alpha=0.8))
