@@ -7,6 +7,4 @@ Linsolve Autovectorized 1 (GROUP_SIZE 16),363501360568,75.401793000
 "Linsolve and advect w/ intrisics, setbnd  mixed",361819431615,81.779161000
 "Base (wo any upgrade -Ofast, -march=native on icx)",363501367792,194.598391000
 Linsolve Autovectorized 2 (GROUP_SIZE 8),363501360448,64.316168000
-solver_rb,369943811497,76.555912000
-solver_rb_auto,369944210807,71.988195000
 solver_rb_intrinsics,348468964392,34.380471000
