@@ -209,8 +209,11 @@ int main(int argc, char** argv)
         exit(1);
     }
     clear_data();
-    for (i = 0; i < 2048; i++) {
-        one_step();
+#pragma omp parallel
+    {
+        for (i = 0; i < 2048; i++) {
+            one_step();
+        }
     }
     free_data();
 
