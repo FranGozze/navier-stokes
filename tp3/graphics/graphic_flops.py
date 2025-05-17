@@ -2,33 +2,77 @@ import pandas as pd
 import glob
 import matplotlib.pyplot as plt
 import sys
+import os
 
-print(f"procesando archivo {sys.argv[1]}/{sys.argv[2]}/Flopsn{sys.argv[3]}.csv")
-df = pd.read_csv(f"{sys.argv[1]}/{sys.argv[2]}/Flopsn{sys.argv[3]}.csv", header=None)  
+# Create output directory if it doesn't exist
+os.makedirs("flops", exist_ok=True)
 
+# Read all CSV files for the given size
+size = sys.argv[3]
+compilers = ['gcc', 'clang', 'icx']
+data = {}
 
-df['result'] = df[1] / df[2]
+for compiler in compilers:
+    file_path = f"{sys.argv[1]}/{compiler}/Flopsn{size}.csv"
+    if os.path.exists(file_path):
+        df = pd.read_csv(file_path, header=None)
+        df['result'] = df[1] / df[2]
+        data[compiler] = df
 
+# Get all unique optimization labels and their max values
+opt_max_values = {}
+for label in set().union(*[set(df[0].str.strip()) for df in data.values()]):
+    max_value = 0
+    for df in data.values():
+        if label in df[0].values:
+            value = df[df[0].str.strip() == label]['result'].values[0]
+            max_value = max(max_value, value)
+    opt_max_values[label] = max_value
 
-means_df_sorted = df.sort_values(by='result', ascending=False)
-labels = means_df_sorted[0].str.strip()  # Get labels from first column and remove whitespace
+# Sort labels by their maximum values
+labels = sorted(opt_max_values.keys(), key=lambda x: opt_max_values[x], reverse=True)
 
-print("flops",sys.argv[3],means_df_sorted)
+# Create the plot
+plt.figure(figsize=(12, 6))
 
-plt.figure(figsize=(10, 6))  # Set figure size
-plt.bar(labels, means_df_sorted['result'])  
+# Set width of bars and positions of the bars
+barWidth = 0.25
+r1 = range(len(labels))
+r2 = [x + barWidth for x in r1]
+r3 = [x + barWidth for x in r2]
+
+# Create bars
+for i, (compiler, df) in enumerate(data.items()):
+    positions = [r1, r2, r3][i]
+    values = []
+    for label in labels:
+        if label in df[0].values:
+            value = df[df[0].str.strip() == label]['result'].values[0]
+        else:
+            value = 0
+        values.append(value)
+    plt.bar(positions, values, width=barWidth, label=compiler)
+
+# Add labels and title
 plt.xlabel('Optimización')
 plt.ylabel('FLOPS')
-plt.title(f"FLOPS por optimización, compilador {sys.argv[2]}, tamaño {sys.argv[3]}")
+plt.title(f"FLOPS por optimización y compilador, tamaño {size} (ordenado por máximo FLOPS)")
 
-plt.xticks(rotation=45, ha='right')  # Rotate labels for better readability
-plt.tight_layout()  # Adjust layout to prevent label cutoff
+# Add xticks on the middle of the group bars
+plt.xticks([r + barWidth for r in range(len(labels))], labels, rotation=45, ha='right')
 
-# plt.show()
+# Add legend
+plt.legend()
 
-# Calculate and display the speedup ratio between max and min FLOPS
-max_flops = means_df_sorted['result'].max()
-min_flops = means_df_sorted['result'].min()
+# Adjust layout
+plt.tight_layout()
+
+# Calculate and display the speedup ratio
+all_values = []
+for df in data.values():
+    all_values.extend(df['result'].values)
+max_flops = max(all_values)
+min_flops = min(all_values)
 speedup = max_flops / min_flops
 
 plt.text(0.02, 0.98, f'{speedup:.2f}x', 
@@ -36,4 +80,5 @@ plt.text(0.02, 0.98, f'{speedup:.2f}x',
          verticalalignment='top',
          bbox=dict(facecolor='white', alpha=0.8))
 
-plt.savefig(f"flops/flops {sys.argv[1].replace('../', '')} {sys.argv[2]} {sys.argv[3]}.png")
+# Save the plot
+plt.savefig(f"flops/flops {sys.argv[1].replace('../', '')} grouped {size}.png")
