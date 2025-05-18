@@ -94,6 +94,7 @@ static void lin_solve(unsigned int n, boundary b,
     const float* blk0 = x0 + color_size;
     float* red = x;
     float* blk = x + color_size;
+
     for (unsigned int k = 0; k < 20; ++k) {
         lin_solve_rb_step(RED, n, a, c, red0, blk, red);
         lin_solve_rb_step(BLACK, n, a, c, blk0, red, blk);
