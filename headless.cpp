@@ -19,8 +19,9 @@
 
 
 #include "indices.h"
-#include "solver.h"
+#include "solver.cuh"   
 #include "timing.h"
+
 
 /* macros */
 
@@ -209,11 +210,8 @@ int main(int argc, char** argv)
         exit(1);
     }
     clear_data();
-#pragma omp parallel
-    {
-        for (i = 0; i < 2048; i++) {
-            one_step();
-        }
+    for (i = 0; i < 2048; i++) {
+        one_step();
     }
     free_data();
 
