@@ -1,7 +1,14 @@
-nvcc -arch=sm_86 -c headless.cu -o headless.o
 
-nvcc -arch=sm_86 -c wtime.cpp -o wtime.o
+ARCH=sm_86
 
-nvcc -arch=sm_86 -c solver_rb_pragma.cu -o solver_rb_cuda.o
+nvcc -arch=$ARCH -c headless.cu -o headless.o
 
-nvcc -arch=sm_86 solver_rb_cuda.o wtime.o headless.o -o cuda
+nvcc -arch=$ARCH -c wtime.cpp -o wtime.o
+
+nvcc -arch=$ARCH -c solver_rb_pragma.cu -o solver_rb_cuda.o
+
+nvcc -arch=$ARCH solver_rb_cuda.o wtime.o headless.o -o cuda
+
+./cuda
+
+rm headless.o wtime.o solver_rb_cuda.o cuda
