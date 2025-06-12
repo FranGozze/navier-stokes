@@ -15,9 +15,9 @@
 */
 
 #include <GL/glut.h>
+#include <cuda_runtime.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <cuda_runtime.h>
 
 #include "indices.h"
 #include "solver.h"
@@ -179,35 +179,84 @@ static void draw_density(void)
    relates mouse movements to forces sources
   ----------------------------------------------------------------------
 */
+__global__ void react_kernel(float* d, float* u, float* v, int N, float force, float source, float* max_velocity2, float* max_density)
+{
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    int size = (N + 2) * (N + 2);
+
+    float local_max_velocity2 = 0.0f;
+    float local_max_density = 0.0f;
+
+    // Compute local max values
+    for (int i = idx; i < size; i += blockDim.x * gridDim.x) {
+        float vel2 = u[i] * u[i] + v[i] * v[i];
+        if (local_max_velocity2 < vel2)
+            local_max_velocity2 = vel2;
+        if (local_max_density < d[i])
+            local_max_density = d[i];
+    }
+
+    // Reduce max values across threads
+    atomicMax((int*)max_velocity2, __float_as_int(local_max_velocity2));
+    atomicMax((int*)max_density, __float_as_int(local_max_density));
+}
+
+__global__ void clear_kernel(float* d, float* u, float* v, int N)
+{
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    int size = (N + 2) * (N + 2);
+    if (idx < size) {
+        u[idx] = 0.0f;
+        v[idx] = 0.0f;
+        d[idx] = 0.0f;
+    }
+}
+
+__global__ void inject_kernel(float* d, float* u, float* v, int N, float force, float source, float* d_max_velocity2, float* d_max_density)
+{
+    int center = (N / 2 + 1) * (N + 2) + (N / 2 + 1);
+    float max_velocity2 = *d_max_velocity2;
+    float max_density = *d_max_density;
+
+    if (threadIdx.x == 0 && blockIdx.x == 0) {
+        if (max_velocity2 < 0.0000005f) {
+            u[center] = force * 10.0f;
+            v[center] = force * 10.0f;
+        }
+        if (max_density < 1.0f) {
+            d[center] = source * 10.0f;
+        }
+    }
+}
+
 
 static void react(float* d, float* u, float* v)
 {
     int i, j, size = (N + 2) * (N + 2);
 
-    float max_velocity2 = 0.0f;
-    float max_density = 0.0f;
+    float *d_max_velocity2, *d_max_density;
 
-    max_velocity2 = max_density = 0.0f;
-    for (i = 0; i < size; i++) {
-        if (max_velocity2 < u[i] * u[i] + v[i] * v[i]) {
-            max_velocity2 = u[i] * u[i] + v[i] * v[i];
-        }
-        if (max_density < d[i]) {
-            max_density = d[i];
-        }
-    }
+    cudaMalloc(&d_max_velocity2, sizeof(float));
+    cudaMalloc(&d_max_density, sizeof(float));
+    cudaMemset(d_max_velocity2, 0, sizeof(float));
+    cudaMemset(d_max_density, 0, sizeof(float));
 
-    for (i = 0; i < size; i++) {
-        u[i] = v[i] = d[i] = 0.0f;
-    }
+    int threads = 256;
+    int blocks = (size + threads - 1) / threads;
 
-    if (max_velocity2 < 0.0000005f) {
-        u[IX(N / 2, N / 2)] = force * 10.0f;
-        v[IX(N / 2, N / 2)] = force * 10.0f;
-    }
-    if (max_density < 1.0f) {
-        d[IX(N / 2, N / 2)] = source * 10.0f;
-    }
+    react_kernel<<<blocks, threads>>>(d, u, v, N, force, source, d_max_velocity2, d_max_density);
+    cudaDeviceSynchronize();
+
+    clear_kernel<<<blocks, threads>>>(d, u, v, N);
+    cudaDeviceSynchronize();
+
+    // Pass device pointers directly
+    inject_kernel<<<1, 1>>>(d, u, v, N, force, source, d_max_velocity2, d_max_density);
+    cudaDeviceSynchronize();
+
+    cudaFree(d_max_velocity2);
+    cudaFree(d_max_density);
+
 
     if (!mouse_down[0] && !mouse_down[2])
         return;
