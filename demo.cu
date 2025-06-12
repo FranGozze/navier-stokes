@@ -68,11 +68,13 @@ static void free_data(void)
 
 static void clear_data(void)
 {
-    int i, size = (N + 2) * (N + 2);
-
-    for (i = 0; i < size; i++) {
-        u[i] = v[i] = u_prev[i] = v_prev[i] = dens[i] = dens_prev[i] = 0.0f;
-    }
+    int size = (N + 2) * (N + 2);
+    cudaMemset(u, 0, size * sizeof(float));
+    cudaMemset(v, 0, size * sizeof(float));
+    cudaMemset(u_prev, 0, size * sizeof(float));
+    cudaMemset(v_prev, 0, size * sizeof(float));
+    cudaMemset(dens, 0, size * sizeof(float));
+    cudaMemset(dens_prev, 0, size * sizeof(float));
 }
 
 static int allocate_data(void)
