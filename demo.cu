@@ -200,90 +200,120 @@ static void draw_density(void)
    relates mouse movements to forces sources
   ----------------------------------------------------------------------
 */
-__global__ void react_kernel(float* d, float* u, float* v, int N, float force, float source, float* max_velocity2, float* max_density)
+
+
+// Device kernel to compute max velocity^2 and max density
+__global__ void compute_max_kernel(const float* d, const float* u, const float* v, int size, float* max_velocity2, float* max_density)
 {
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    int size = (N + 2) * (N + 2);
+    extern __shared__ float sdata[];
+    float* smax_vel2 = sdata;
+    float* smax_dens = sdata + blockDim.x;
 
-    float local_max_velocity2 = 0.0f;
-    float local_max_density = 0.0f;
+    int tid = threadIdx.x;
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-    // Compute local max values
-    for (int i = idx; i < size; i += blockDim.x * gridDim.x) {
-        float vel2 = u[i] * u[i] + v[i] * v[i];
-        if (local_max_velocity2 < vel2)
-            local_max_velocity2 = vel2;
-        if (local_max_density < d[i])
-            local_max_density = d[i];
+    float local_vel2 = 0.0f;
+    float local_dens = 0.0f;
+
+    if (i < size) {
+        local_vel2 = u[i] * u[i] + v[i] * v[i];
+        local_dens = d[i];
     }
 
-    // Reduce max values across threads
-    atomicMax((int*)max_velocity2, __float_as_int(local_max_velocity2));
-    atomicMax((int*)max_density, __float_as_int(local_max_density));
-}
+    smax_vel2[tid] = local_vel2;
+    smax_dens[tid] = local_dens;
+    __syncthreads();
 
-__global__ void clear_kernel(float* d, float* u, float* v, int N)
-{
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    int size = (N + 2) * (N + 2);
-    if (idx < size) {
-        u[idx] = 0.0f;
-        v[idx] = 0.0f;
-        d[idx] = 0.0f;
+    // Parallel reduction for max
+    for (int s = blockDim.x / 2; s > 0; s >>= 1) {
+        if (tid < s) {
+            if (smax_vel2[tid] < smax_vel2[tid + s])
+                smax_vel2[tid] = smax_vel2[tid + s];
+            if (smax_dens[tid] < smax_dens[tid + s])
+                smax_dens[tid] = smax_dens[tid + s];
+        }
+        __syncthreads();
+    }
+
+    if (tid == 0) {
+        max_velocity2[blockIdx.x] = smax_vel2[0];
+        max_density[blockIdx.x] = smax_dens[0];
     }
 }
 
-__global__ void inject_kernel(float* d, float* u, float* v, int N, float force, float source, float* d_max_velocity2, float* d_max_density)
+// Device kernel to clear arrays
+__global__ void clear_arrays_kernel(float* d, float* u, float* v, int size)
 {
-    int center = (N / 2 + 1) * (N + 2) + (N / 2 + 1);
-    float max_velocity2 = *d_max_velocity2;
-    float max_density = *d_max_density;
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < size) {
+        d[i] = 0.0f;
+        u[i] = 0.0f;
+        v[i] = 0.0f;
+    }
+}
 
+// Device kernel to set a value at a specific index
+__global__ void set_value_kernel(float* arr, int idx, float value)
+{
     if (threadIdx.x == 0 && blockIdx.x == 0) {
-        if (max_velocity2 < 0.0000005f) {
-            u[center] = force * 10.0f;
-            v[center] = force * 10.0f;
-        }
-        if (max_density < 1.0f) {
-            d[center] = source * 10.0f;
-        }
+        arr[idx] = value;
     }
 }
-
 
 static void react(float* d, float* u, float* v)
 {
-    int i, j, size = (N + 2) * (N + 2);
+    int size = (N + 2) * (N + 2);
 
-    float *d_max_velocity2, *d_max_density;
-
-    cudaMalloc(&d_max_velocity2, sizeof(float));
-    cudaMalloc(&d_max_density, sizeof(float));
-    cudaMemset(d_max_velocity2, 0, sizeof(float));
-    cudaMemset(d_max_density, 0, sizeof(float));
-
+    // Compute max velocity^2 and max density on device
     int threads = 256;
     int blocks = (size + threads - 1) / threads;
+    float* d_max_velocity2;
+    float* d_max_density;
+    cudaMalloc(&d_max_velocity2, blocks * sizeof(float));
+    cudaMalloc(&d_max_density, blocks * sizeof(float));
 
-    react_kernel<<<blocks, threads>>>(d, u, v, N, force, source, d_max_velocity2, d_max_density);
-    cudaDeviceSynchronize();
+    compute_max_kernel<<<blocks, threads, threads * 2 * sizeof(float)>>>(d, u, v, size, d_max_velocity2, d_max_density);
 
-    clear_kernel<<<blocks, threads>>>(d, u, v, N);
-    cudaDeviceSynchronize();
+    // Reduce on host
+    float* h_max_velocity2 = (float*)malloc(blocks * sizeof(float));
+    float* h_max_density = (float*)malloc(blocks * sizeof(float));
+    cudaMemcpy(h_max_velocity2, d_max_velocity2, blocks * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_max_density, d_max_density, blocks * sizeof(float), cudaMemcpyDeviceToHost);
 
-    // Pass device pointers directly
-    inject_kernel<<<1, 1>>>(d, u, v, N, force, source, d_max_velocity2, d_max_density);
-    cudaDeviceSynchronize();
+    float max_velocity2 = 0.0f;
+    float max_density = 0.0f;
+    for (int i = 0; i < blocks; i++) {
+        if (max_velocity2 < h_max_velocity2[i])
+            max_velocity2 = h_max_velocity2[i];
+        if (max_density < h_max_density[i])
+            max_density = h_max_density[i];
+    }
 
+    free(h_max_velocity2);
+    free(h_max_density);
     cudaFree(d_max_velocity2);
     cudaFree(d_max_density);
 
+    // Clear arrays on device
+    clear_arrays_kernel<<<blocks, threads>>>(d, u, v, size);
 
+    // Set initial values if needed
+    if (max_velocity2 < 0.0000005f) {
+        int idx = IX(N / 2, N / 2);
+        set_value_kernel<<<1, 1>>>(u, idx, force * 10.0f);
+        set_value_kernel<<<1, 1>>>(v, idx, force * 10.0f);
+    }
+    if (max_density < 1.0f) {
+        int idx = IX(N / 2, N / 2);
+        set_value_kernel<<<1, 1>>>(d, idx, source * 10.0f);
+    }
+
+    // Handle mouse input on host, then update device arrays
     if (!mouse_down[0] && !mouse_down[2])
         return;
 
-    i = (int)((mx / (float)win_x) * N + 1);
-    j = (int)(((win_y - my) / (float)win_y) * N + 1);
+    int i = (int)((mx / (float)win_x) * N + 1);
+    int j = (int)(((win_y - my) / (float)win_y) * N + 1);
 
     if (i < 1 || i > N || j < 1 || j > N)
         return;
@@ -291,19 +321,18 @@ static void react(float* d, float* u, float* v)
     if (mouse_down[0]) {
         float u_val = force * (mx - omx);
         float v_val = force * (omy - my);
-        cudaMemcpy(u + IX(i, j), &u_val, sizeof(float), cudaMemcpyHostToDevice);
-        cudaMemcpy(v + IX(i, j), &v_val, sizeof(float), cudaMemcpyHostToDevice);
+        int idx = IX(i, j);
+        set_value_kernel<<<1, 1>>>(u, idx, u_val);
+        set_value_kernel<<<1, 1>>>(v, idx, v_val);
     }
 
     if (mouse_down[2]) {
-        float d_val = source;
-        cudaMemcpy(d + IX(i, j), &d_val, sizeof(float), cudaMemcpyHostToDevice);
+        int idx = IX(i, j);
+        set_value_kernel<<<1, 1>>>(d, idx, source);
     }
 
     omx = mx;
     omy = my;
-
-    return;
 }
 
 /*
