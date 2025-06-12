@@ -195,7 +195,7 @@ static void one_step(void)
     vel_ns_p_cell += 1.0e9 * (wtime() - start_t) / (N * N);
 
     start_t = wtime();
-    dens_step(N, dens, dens_prev, u, v, diff, dt);
+    // dens_step(N, dens, dens_prev, u, v, diff, dt);
     dens_ns_p_cell += 1.0e9 * (wtime() - start_t) / (N * N);
 
     if (1.0 < wtime() - one_second) { /* at least 1s between stats */

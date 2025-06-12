@@ -50,6 +50,17 @@ __global__ void set_bnd_kernel(unsigned int n, boundary b, float* x)
     }
 }
 
+__global__ void set_bnd_corners_kernel(unsigned int n, float* x)
+{
+    if (threadIdx.x == 0 && blockIdx.x == 0 && threadIdx.y == 0 && blockIdx.y == 0) {
+        x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
+        x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
+        x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
+        x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
+    }
+}
+
+
 static void set_bnd(unsigned int n, boundary b, float* x)
 {
     unsigned int block_size = 256;
@@ -57,10 +68,16 @@ static void set_bnd(unsigned int n, boundary b, float* x)
 
     set_bnd_kernel<<<num_blocks, block_size>>>(n, b, x);
     cudaDeviceSynchronize();
-    x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
-    x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
-    x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
-    x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
+    // Handle corners in a single thread
+    dim3 block_size_corners(1, 1);
+    dim3 num_blocks_corners(1, 1);
+    set_bnd_corners_kernel<<<num_blocks_corners, block_size_corners>>>(n, x);
+    cudaDeviceSynchronize();
+    // Ensure corners are set correctly
+    // x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
+    // x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
+    // x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
+    // x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
 }
 
 // CUDA kernel for red-black solver step
