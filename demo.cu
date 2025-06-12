@@ -289,12 +289,15 @@ static void react(float* d, float* u, float* v)
         return;
 
     if (mouse_down[0]) {
-        u[IX(i, j)] = force * (mx - omx);
-        v[IX(i, j)] = force * (omy - my);
+        float u_val = force * (mx - omx);
+        float v_val = force * (omy - my);
+        cudaMemcpy(u + IX(i, j), &u_val, sizeof(float), cudaMemcpyHostToDevice);
+        cudaMemcpy(v + IX(i, j), &v_val, sizeof(float), cudaMemcpyHostToDevice);
     }
 
     if (mouse_down[2]) {
-        d[IX(i, j)] = source;
+        float d_val = source;
+        cudaMemcpy(d + IX(i, j), &d_val, sizeof(float), cudaMemcpyHostToDevice);
     }
 
     omx = mx;
