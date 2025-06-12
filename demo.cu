@@ -79,12 +79,12 @@ static int allocate_data(void)
 {
     int size = (N + 2) * (N + 2);
 
-    cudaMallocManaged((void**)&u, size * sizeof(float));
-    cudaMallocManaged((void**)&v, size * sizeof(float));
-    cudaMallocManaged((void**)&u_prev, size * sizeof(float));
-    cudaMallocManaged((void**)&v_prev, size * sizeof(float));
-    cudaMallocManaged((void**)&dens, size * sizeof(float));
-    cudaMallocManaged((void**)&dens_prev, size * sizeof(float));
+    cudaMalloc((void**)&u, size * sizeof(float));
+    cudaMalloc((void**)&v, size * sizeof(float));
+    cudaMalloc((void**)&u_prev, size * sizeof(float));
+    cudaMalloc((void**)&v_prev, size * sizeof(float));
+    cudaMalloc((void**)&dens, size * sizeof(float));
+    cudaMalloc((void**)&dens_prev, size * sizeof(float));
 
     if (!u || !v || !u_prev || !v_prev || !dens || !dens_prev) {
         fprintf(stderr, "cannot allocate data\n");
@@ -123,6 +123,17 @@ static void draw_velocity(void)
 
     h = 1.0f / N;
 
+    // Copy u and v from device to host
+    int size = (N + 2) * (N + 2);
+    static float* u_host = NULL;
+    static float* v_host = NULL;
+    if (!u_host)
+        u_host = (float*)malloc(size * sizeof(float));
+    if (!v_host)
+        v_host = (float*)malloc(size * sizeof(float));
+    cudaMemcpy(u_host, u, size * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(v_host, v, size * sizeof(float), cudaMemcpyDeviceToHost);
+
     glColor3f(1.0f, 1.0f, 1.0f);
     glLineWidth(1.0f);
 
@@ -134,7 +145,7 @@ static void draw_velocity(void)
             y = (j - 0.5f) * h;
 
             glVertex2f(x, y);
-            glVertex2f(x + u[IX(i, j)], y + v[IX(i, j)]);
+            glVertex2f(x + u_host[IX(i, j)], y + v_host[IX(i, j)]);
         }
     }
 
@@ -148,6 +159,14 @@ static void draw_density(void)
 
     h = 1.0f / N;
 
+    // Copy dens from device to host
+    int size = (N + 2) * (N + 2);
+    static float* dens_host = NULL;
+    if (!dens_host) {
+        dens_host = (float*)malloc(size * sizeof(float));
+    }
+    cudaMemcpy(dens_host, dens, size * sizeof(float), cudaMemcpyDeviceToHost);
+
     glBegin(GL_QUADS);
 
     for (i = 0; i <= N; i++) {
@@ -155,10 +174,10 @@ static void draw_density(void)
         for (j = 0; j <= N; j++) {
             y = (j - 0.5f) * h;
 
-            d00 = dens[IX(i, j)];
-            d01 = dens[IX(i, j + 1)];
-            d10 = dens[IX(i + 1, j)];
-            d11 = dens[IX(i + 1, j + 1)];
+            d00 = dens_host[IX(i, j)];
+            d01 = dens_host[IX(i, j + 1)];
+            d10 = dens_host[IX(i + 1, j)];
+            d11 = dens_host[IX(i + 1, j + 1)];
 
             glColor3f(d00, d00, d00);
             glVertex2f(x, y);
