@@ -260,6 +260,24 @@ __global__ void set_value_kernel(float* arr, int idx, float value)
     }
 }
 
+__global__ void set_max_values(float* max_velocity2, float* max_density, int blocks)
+{
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx == 0) {
+        float aux_max_velocity2 = 0.0f;
+        float aux_max_density = 0.0f;
+        for (int i = 0; i < blocks; i++) {
+            if (aux_max_velocity2 < max_velocity2[i])
+                aux_max_velocity2 = max_velocity2[i];
+            if (aux_max_density < max_density[i])
+                aux_max_density = max_density[i];
+        }
+        *max_velocity2 = aux_max_velocity2;
+        *max_density = aux_max_density;
+    }
+}
+
+
 static void react(float* d, float* u, float* v)
 {
     int size = (N + 2) * (N + 2);
@@ -274,39 +292,12 @@ static void react(float* d, float* u, float* v)
 
     compute_max_kernel<<<blocks, threads, threads * 2 * sizeof(float)>>>(d, u, v, size, d_max_velocity2, d_max_density);
 
-    // Reduce on host
-    float* h_max_velocity2 = (float*)malloc(blocks * sizeof(float));
-    float* h_max_density = (float*)malloc(blocks * sizeof(float));
-    cudaMemcpy(h_max_velocity2, d_max_velocity2, blocks * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(h_max_density, d_max_density, blocks * sizeof(float), cudaMemcpyDeviceToHost);
-
-    float max_velocity2 = 0.0f;
-    float max_density = 0.0f;
-    for (int i = 0; i < blocks; i++) {
-        if (max_velocity2 < h_max_velocity2[i])
-            max_velocity2 = h_max_velocity2[i];
-        if (max_density < h_max_density[i])
-            max_density = h_max_density[i];
-    }
-
-    free(h_max_velocity2);
-    free(h_max_density);
-    cudaFree(d_max_velocity2);
-    cudaFree(d_max_density);
 
     // Clear arrays on device
     clear_arrays_kernel<<<blocks, threads>>>(d, u, v, size);
 
-    // Set initial values if needed
-    if (max_velocity2 < 0.0000005f) {
-        int idx = IX(N / 2, N / 2);
-        set_value_kernel<<<1, 1>>>(u, idx, force * 10.0f);
-        set_value_kernel<<<1, 1>>>(v, idx, force * 10.0f);
-    }
-    if (max_density < 1.0f) {
-        int idx = IX(N / 2, N / 2);
-        set_value_kernel<<<1, 1>>>(d, idx, source * 10.0f);
-    }
+    int idx = IX(N / 2, N / 2);
+    set_value_kernel<<<1, 1>>>(d, u, v, idx, force, source, d_max_velocity2, d_max_density);
 
     // Handle mouse input on host, then update device arrays
     if (!mouse_down[0] && !mouse_down[2])
