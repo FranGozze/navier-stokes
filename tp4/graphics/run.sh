@@ -1,6 +1,6 @@
 #! /bin/bash
 
-comps=("gcc" "clang" "icx" "nvcc")
+comps=("nvcc")
 ns=("1024")
 
 for comp in "${comps[@]}"; do

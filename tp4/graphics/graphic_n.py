@@ -13,16 +13,18 @@ for file in csv_files:
 
 min_df = pd.DataFrame(list(min_dict.items()), columns=['File Name', 'Min'])
 
-min_df_sorted = min_df.sort_values(by='Min', ascending=False)
+min_df_sorted = min_df.sort_values(by='Min', ascending=True)
 
-min_df_sorted['File Name'] = min_df_sorted['File Name'].str.replace(f"{sys.argv[1]}/{sys.argv[2]}/{sys.argv[3]}/", "").str.replace("../sv/clang/", "").str.replace(".csv", "")
+min_df_sorted['File Name'] = min_df_sorted['File Name'].str.replace(f"{sys.argv[1]}/{sys.argv[2]}/", "").str.replace(".csv", "")
+
+min_df_sorted['Min'] = 1/min_df_sorted['Min']
 
 print("n",sys.argv[3],min_df_sorted)
 
 plt.figure(figsize=(10, 6))  
 plt.bar(min_df_sorted['File Name'], min_df_sorted['Min'])
 plt.xlabel(f"Optimización")
-plt.ylabel("Celdas por nanosegundo")
+plt.ylabel("1 / Celdas por nanosegundo")
 plt.title(f"Celdas por nanosegundo por optimización, compilador {sys.argv[2]}, tamaño {sys.argv[3]}")
 plt.xticks(rotation=45, ha="right")  
 plt.tight_layout()  
