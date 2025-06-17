@@ -162,7 +162,7 @@ static void lin_solve_rb_step(grid_color color,
     // int shift = color == RED ? 1 : -1;
     // unsigned int start = color == RED ? 0 : 1;
 
-    dim3 block_size(BLOCK_SIZE_X, BLOCK_SIZE_Y);
+    dim3 blockSize(BLOCK_SIZE_X, BLOCK_SIZE_Y);
     dim3 gridSize((width + blockSize.x - 1) / blockSize.x,
                   (n + blockSize.y - 1) / blockSize.y);
 
