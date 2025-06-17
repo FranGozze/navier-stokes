@@ -169,7 +169,7 @@ static void lin_solve_rb_step(grid_color color,
     // Calcular tamaño de shared memory (halo de 1 elemento alrededor del bloque)
     size_t sharedMemSize = (blockSize.x + 2) * (blockSize.y + 2) * sizeof(float);
 
-    lin_solve_rb_step_kernel_warp_opt<<<gridSize, blockSize, sharedMemSize>>>(color, n, a, c, same0, neigh, same);
+    lin_solve_rb_step_kernel<<<gridSize, blockSize, sharedMemSize>>>(color, n, a, c, same0, neigh, same);
     cudaDeviceSynchronize();
 
 
