@@ -81,65 +81,73 @@ static void set_bnd(unsigned int n, boundary b, float* x)
 }
 
 // CUDA kernel for red-black solver step
-#define BLOCK_SIZE_X 32 // Warp-aligned
-#define BLOCK_SIZE_Y 8 // Puedes ajustar esto según ocupación
+#define BLOCK_SIZE_X 16 // Warp-aligned
+#define BLOCK_SIZE_Y 16 // Puedes ajustar esto según ocupación
 
-__global__ void lin_solve_rb_step_kernel_warp_opt(grid_color color,
-                                                  unsigned int n,
-                                                  float a,
-                                                  float c,
-                                                  const float* __restrict__ same0,
-                                                  const float* __restrict__ neigh,
-                                                  float* __restrict__ same)
+__global__ void lin_solve_rb_step_kernel(
+    grid_color color,
+    unsigned int n,
+    float a,
+    float c,
+    const float* __restrict__ same0,
+    const float* __restrict__ neigh,
+    float* __restrict__ same)
 {
-    const unsigned int width = (n + 2) / 2;
+    extern __shared__ float shared_neigh[];
 
-    const int shift = (color == RED) ? 1 : -1;
-    const unsigned int start = (color == RED) ? 0 : 1;
+    int shift = color == RED ? 1 : -1;
+    int start = color == RED ? 0 : 1;
+    unsigned int width = (n + 2) / 2;
 
-    const unsigned int global_y = blockIdx.y * BLOCK_SIZE_Y + threadIdx.y + 1;
-    const unsigned int base_x = blockIdx.x * BLOCK_SIZE_X;
-    const int lane = threadIdx.x % warpSize;
+    // Coordenadas globales
+    unsigned int y = blockIdx.y * blockDim.y + threadIdx.y + 1;
+    unsigned int x_base = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (global_y > n)
+    // Patrón de red-black
+    int pattern_shift = (y % 2) ? shift : -shift;
+    int pattern_start = (y % 2) ? start : 1 - start;
+
+    // Calcular x real considerando el patrón
+    unsigned int x = pattern_start + 2 * x_base;
+    if (x >= width - (1 - pattern_start))
+        return;
+    if (y > n)
         return;
 
-    const int local_shift = (global_y % 2 == 0) ? -shift : shift;
-    const unsigned int local_start = (global_y % 2 == 0) ? 1 - start : start;
-    const unsigned int global_x = base_x + threadIdx.x + local_start;
+    int index = idx(x, y, width);
 
-    if (global_x >= width - (1 - local_start))
-        return;
+    // Cargar datos a shared memory (vecindario de 5 puntos)
+    if (threadIdx.y < blockDim.y && threadIdx.x < blockDim.x) {
+        // Cargar los 5 puntos necesarios para el stencil
+        shared_neigh[threadIdx.y * (blockDim.x + 2) + threadIdx.x + 1] = neigh[index];
 
-    // Shared tile with padding to avoid bank conflicts
-    __shared__ float tile[BLOCK_SIZE_Y + 2][BLOCK_SIZE_X + 2 + 1]; // +1 to pad
+        // Bordes del bloque
+        if (threadIdx.x == 0) {
+            shared_neigh[threadIdx.y * (blockDim.x + 2)] = neigh[index - 1];
+        }
+        if (threadIdx.x == blockDim.x - 1) {
+            shared_neigh[threadIdx.y * (blockDim.x + 2) + blockDim.x + 1] = neigh[index + 1];
+        }
+        if (threadIdx.y == 0) {
+            shared_neigh[threadIdx.x + 1] = neigh[index - width];
+        }
+        if (threadIdx.y == blockDim.y - 1) {
+            shared_neigh[(blockDim.y + 1) * (blockDim.x + 2) + threadIdx.x + 1] = neigh[index + width];
+        }
+    }
 
-    // Local thread coords in tile
-    const int tx = threadIdx.x + 1;
-    const int ty = threadIdx.y + 1;
+    __syncthreads();
 
-    // Global index
-    const int index = idx(global_x, global_y, width);
-    tile[ty][tx] = neigh[index];
+    // Índices en shared memory
+    int s_idx = (threadIdx.y + 1) * (blockDim.x + 2) + threadIdx.x + 1;
 
-    // Warp-level halo loads — avoid sync if safe
-    if (threadIdx.x == 0 && global_x > 0)
-        tile[ty][0] = neigh[index - 1];
-    if (threadIdx.x == BLOCK_SIZE_X - 1 && global_x < width - 1)
-        tile[ty][BLOCK_SIZE_X + 1] = neigh[index + 1];
-
-    if (threadIdx.y == 0 && global_y > 0)
-        tile[0][tx] = neigh[index - global_y];
-    if (threadIdx.y == BLOCK_SIZE_Y - 1 && global_y < n)
-        tile[BLOCK_SIZE_Y + 1][tx] = neigh[index + global_y];
-
-    // Sincronizar solo dentro del warp si los accesos son por warp completo
-    __syncwarp();
-
-    // Usar tile ya cargado
-    same[index] = (same0[index] + a * (tile[ty - 1][tx] + tile[ty][tx] + tile[ty][tx + local_shift] + tile[ty + 1][tx])) / c;
+    // Calcular nuevo valor usando shared memory
+    same[index] = (same0[index] + a * (shared_neigh[s_idx - (blockDim.x + 2)] + // Arriba
+                                       shared_neigh[s_idx] + // Centro
+                                       shared_neigh[s_idx + pattern_shift] + // Izq/Der (depende del patrón)
+                                       shared_neigh[s_idx + (blockDim.x + 2)]))
+        / c; // Abajo
 }
-
 
 static void lin_solve_rb_step(grid_color color,
                               unsigned int n,
@@ -155,10 +163,13 @@ static void lin_solve_rb_step(grid_color color,
     // unsigned int start = color == RED ? 0 : 1;
 
     dim3 block_size(BLOCK_SIZE_X, BLOCK_SIZE_Y);
-    dim3 grid_size((width + BLOCK_SIZE_X - 1) / BLOCK_SIZE_X,
-                   (n + BLOCK_SIZE_Y - 1) / BLOCK_SIZE_Y);
+    dim3 gridSize((width + blockSize.x - 1) / blockSize.x,
+                  (n + blockSize.y - 1) / blockSize.y);
 
-    lin_solve_rb_step_kernel_warp_opt<<<grid_size, block_size>>>(color, n, a, c, same0, neigh, same);
+    // Calcular tamaño de shared memory (halo de 1 elemento alrededor del bloque)
+    size_t sharedMemSize = (blockSize.x + 2) * (blockSize.y + 2) * sizeof(float);
+
+    lin_solve_rb_step_kernel_warp_opt<<<gridSize, blockSize, sharedMemSize>>>(color, n, a, c, same0, neigh, same);
     cudaDeviceSynchronize();
 
 
