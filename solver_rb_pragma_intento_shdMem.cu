@@ -84,7 +84,7 @@ static void set_bnd(unsigned int n, boundary b, float* x)
 #define BLOCK_SIZE_X 16 // Warp-aligned
 #define BLOCK_SIZE_Y 16 // Puedes ajustar esto según ocupación
 
-__global__ void lin_solve_rb_step_kernel(
+__global__ void lin_solve_rb_step_shared_kernel(
     grid_color color,
     unsigned int n,
     float a,
@@ -95,60 +95,54 @@ __global__ void lin_solve_rb_step_kernel(
 {
     extern __shared__ float shared_neigh[];
 
-    int shift = color == RED ? 1 : -1;
-    int start = color == RED ? 0 : 1;
     unsigned int width = (n + 2) / 2;
+    int shift = color == RED ? 1 : -1;
 
-    // Coordenadas globales
-    unsigned int y = blockIdx.y * blockDim.y + threadIdx.y + 1;
-    unsigned int x_base = blockIdx.x * blockDim.x + threadIdx.x;
+    // Coordenadas del bloque
+    unsigned int block_start_x = blockIdx.x * (blockDim.x - 2);
+    unsigned int block_start_y = blockIdx.y * (blockDim.y - 2) + 1;
 
-    // Patrón de red-black
-    int pattern_shift = (y % 2) ? shift : -shift;
-    int pattern_start = (y % 2) ? start : 1 - start;
+    // Coordenadas locales con halo
+    unsigned int local_x = threadIdx.x;
+    unsigned int local_y = threadIdx.y;
 
-    // Calcular x real considerando el patrón
-    unsigned int x = pattern_start + 2 * x_base;
-    if (x >= width - (1 - pattern_start))
-        return;
-    if (y > n)
-        return;
+    // Coordenadas globales con halo
+    unsigned int global_x = block_start_x + local_x - 1;
+    unsigned int global_y = block_start_y + local_y - 1;
 
-    int index = idx(x, y, width);
-
-    // Cargar datos a shared memory (vecindario de 5 puntos)
-    if (threadIdx.y < blockDim.y && threadIdx.x < blockDim.x) {
-        // Cargar los 5 puntos necesarios para el stencil
-        shared_neigh[threadIdx.y * (blockDim.x + 2) + threadIdx.x + 1] = neigh[index];
-
-        // Bordes del bloque
-        if (threadIdx.x == 0) {
-            shared_neigh[threadIdx.y * (blockDim.x + 2)] = neigh[index - 1];
-        }
-        if (threadIdx.x == blockDim.x - 1) {
-            shared_neigh[threadIdx.y * (blockDim.x + 2) + blockDim.x + 1] = neigh[index + 1];
-        }
-        if (threadIdx.y == 0) {
-            shared_neigh[threadIdx.x + 1] = neigh[index - width];
-        }
-        if (threadIdx.y == blockDim.y - 1) {
-            shared_neigh[(blockDim.y + 1) * (blockDim.x + 2) + threadIdx.x + 1] = neigh[index + width];
-        }
+    // Cargar datos a shared memory (incluyendo halo)
+    if (global_y <= n && global_x < width) {
+        int load_idx = idx(global_x, global_y, width);
+        shared_neigh[local_y * blockDim.x + local_x] = neigh[load_idx];
     }
 
     __syncthreads();
 
-    // Índices en shared memory
-    int s_idx = (threadIdx.y + 1) * (blockDim.x + 2) + threadIdx.x + 1;
+    // Solo los hilos internos (no halo) calculan resultados
+    if (threadIdx.x > 0 && threadIdx.x < blockDim.x - 1 && threadIdx.y > 0 && threadIdx.y < blockDim.y - 1) {
 
-    // Calcular nuevo valor usando shared memory
-    same[index] = (same0[index] + a * (shared_neigh[s_idx - (blockDim.x + 2)] + // Arriba
-                                       shared_neigh[s_idx] + // Centro
-                                       shared_neigh[s_idx + pattern_shift] + // Izq/Der (depende del patrón)
-                                       shared_neigh[s_idx + (blockDim.x + 2)]))
-        / c; // Abajo
+        unsigned int x = block_start_x + threadIdx.x - 1;
+        unsigned int y = block_start_y + threadIdx.y - 1;
+
+        // Aplicar patrón red-black
+        int start = color == RED ? 0 : 1;
+        int pattern_shift = (y % 2) ? shift : -shift;
+        int pattern_start = (y % 2) ? start : 1 - start;
+
+        // Verificar que cumple con el patrón
+        if ((x - pattern_start) % 2 != 0 || y > n || x >= width - (1 - pattern_start))
+            return;
+
+        int local_idx = threadIdx.y * blockDim.x + threadIdx.x;
+        int s_top = local_idx - blockDim.x;
+        int s_bottom = local_idx + blockDim.x;
+        int s_side = local_idx + pattern_shift;
+
+        int global_idx = idx(x, y, width);
+
+        same[global_idx] = (same0[global_idx] + a * (shared_neigh[s_top] + shared_neigh[local_idx] + shared_neigh[s_side] + shared_neigh[s_bottom])) / c;
+    }
 }
-
 static void lin_solve_rb_step(grid_color color,
                               unsigned int n,
                               float a,
@@ -169,7 +163,7 @@ static void lin_solve_rb_step(grid_color color,
     // Calcular tamaño de shared memory (halo de 1 elemento alrededor del bloque)
     size_t sharedMemSize = (blockSize.x + 2) * (blockSize.y + 2) * sizeof(float);
 
-    lin_solve_rb_step_kernel<<<gridSize, blockSize, sharedMemSize>>>(color, n, a, c, same0, neigh, same);
+    lin_solve_rb_step_shared_kernel<<<gridSize, blockSize, sharedMemSize>>>(color, n, a, c, same0, neigh, same);
     cudaDeviceSynchronize();
 
 
